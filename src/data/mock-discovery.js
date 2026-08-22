@@ -4,12 +4,17 @@ export const discoveryCollections = Object.freeze({
     { postId: 'post-accessible-apps', rank: 2, reason: 'İlgi alanlarından' },
     { postId: 'post-indie-game', rank: 3, reason: 'Bugünün keşfi' },
     { postId: 'post-basketball-poll', rank: 4, reason: 'Bugünün tartışması' },
+    { postId: 'post-space-audio', rank: 5, reason: 'Bilim topluluklarında konuşuluyor' },
+    { postId: 'post-finance-notes', rank: 6, reason: 'Bugün kaydedilenlerden' },
+    { postId: 'post-city-library', rank: 7, reason: 'Yakınındaki iyi fikirlerden' },
   ]),
   weekly: Object.freeze([
     { postId: 'post-space-audio', rank: 1, reason: 'Haftanın öne çıkanlarından' },
     { postId: 'post-finance-notes', rank: 2, reason: 'Bu hafta ilgi gördü' },
     { postId: 'post-public-spaces', rank: 3, reason: 'Hafta boyunca konuşuldu' },
     { postId: 'post-open-air-cinema', rank: 4, reason: 'Haftalık seçki' },
+    { postId: 'post-indie-game', rank: 5, reason: 'Oyun topluluklarında bu hafta' },
+    { postId: 'post-basketball-poll', rank: 6, reason: 'Haftanın tartışması' },
   ]),
   overlooked: Object.freeze([
     {
