@@ -217,6 +217,19 @@ export const usePrototypeStore = defineStore('prototype', {
       this.retention.reentryDismissed = false
     },
 
+    seedReturningUser() {
+      this.retention.returningUser = true
+      this.retention.lastVisit = '2026-08-20T18:30:00.000Z'
+      this.retention.lastSeenTopics = ['teknoloji', 'oyun']
+      this.retention.reentryDismissed = false
+      this.setPostFeedback('post-accessible-apps', FEEDBACK_STATES.interested)
+    },
+
+    setNormalVisit() {
+      this.retention.returningUser = false
+      this.retention.reentryDismissed = false
+    },
+
     dismissReentry() {
       this.retention.reentryDismissed = true
     },
