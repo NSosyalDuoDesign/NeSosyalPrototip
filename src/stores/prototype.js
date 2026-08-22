@@ -119,6 +119,11 @@ export const usePrototypeStore = defineStore('prototype', {
       this.user.onboardingCompleted = false
     },
 
+    seedOnboarding(complete = true) {
+      this.setSelectedInterests(['teknoloji', 'bilim', 'oyun'])
+      this.user.onboardingCompleted = Boolean(complete)
+    },
+
     setExperiencePreset(preset) {
       if (Object.values(EXPERIENCE_PRESETS).includes(preset)) this.user.experiencePreset = preset
     },
@@ -141,6 +146,12 @@ export const usePrototypeStore = defineStore('prototype', {
       else this.topicFeedback[topicId] = feedback
     },
 
+    seedSpecificFeedback() {
+      this.seedOnboarding(true)
+      this.setPostFeedback('post-robotics-lab', FEEDBACK_STATES.interested)
+      this.setPostFeedback('post-basketball-poll', FEEDBACK_STATES.notInterested)
+    },
+
     advanceTreasureHunt(stageId, simulatedCode) {
       if (!stageId || this.treasureHunt.completedStages.includes(stageId)) return
       this.treasureHunt.completedStages.push(stageId)
@@ -149,11 +160,31 @@ export const usePrototypeStore = defineStore('prototype', {
       this.treasureHunt.rewardUnlocked = this.treasureHunt.completedStages.length >= 3
     },
 
+    seedTreasureHunt(completed = false) {
+      this.treasureHunt = completed
+        ? {
+            currentStage: 3,
+            completedStages: ['demo-stage-1', 'demo-stage-2', 'demo-stage-3'],
+            simulatedScans: ['NS-01', 'NS-02', 'NS-03'],
+            rewardUnlocked: true,
+          }
+        : {
+            currentStage: 0,
+            completedStages: [],
+            simulatedScans: [],
+            rewardUnlocked: false,
+          }
+    },
+
     setComposerDraft(draftText) {
       this.composer.draftText = String(draftText ?? '')
       this.composer.interventionDismissed = false
       this.composer.interventionState = 'idle'
       this.composer.interventionResult = null
+    },
+
+    seedComposerText(draftText) {
+      this.setComposerDraft(draftText)
     },
 
     setComposerAttachment(attachment) {
