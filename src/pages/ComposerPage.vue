@@ -1,13 +1,5 @@
 <template>
   <div class="composer-page">
-    <header class="composer-header">
-      <q-btn flat round dense icon="close" to="/" aria-label="Gönderi oluşturmayı kapat" />
-      <div>
-        <span>Ne Sosyal?</span>
-        <h1>Gönderi oluştur</h1>
-      </div>
-    </header>
-
     <main class="composer-shell">
       <section v-if="published" class="composer-success" aria-live="polite">
         <div class="composer-success__icon" aria-hidden="true">
@@ -211,7 +203,7 @@ function startNewPost() {
 
 <style scoped>
 .composer-page {
-  min-height: 100dvh;
+  min-height: 100%;
   color: var(--ns-text, #15171a);
   background: var(--ns-bg-subtle, #f7f8fa);
 }

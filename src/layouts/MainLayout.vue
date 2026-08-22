@@ -1,43 +1,28 @@
 <template>
-  <q-layout view="hHh lpR fFf" class="ns-layout" :data-experience="store.user.experiencePreset">
-    <q-header class="ns-header">
-      <q-toolbar class="ns-toolbar">
+  <q-layout view="lHh Lpr lFf" class="ns-layout" :data-experience="store.user.experiencePreset">
+    <q-header class="ns-mobile-header lt-md">
+      <q-toolbar class="ns-mobile-toolbar">
         <q-btn
           flat
           round
           dense
           icon="menu"
           aria-label="Menüyü aç"
-          class="lt-md ns-menu-button"
+          class="ns-menu-button"
           @click="drawerOpen = true"
         />
-
         <router-link to="/" class="ns-brand" aria-label="Ne Sosyal? ana sayfa">
           <img src="/icons/favicon-96x96.png" alt="" width="36" height="36" />
           <span>Ne Sosyal?</span>
         </router-link>
-
-        <nav class="ns-desktop-nav gt-sm" aria-label="Ana navigasyon">
-          <router-link to="/" exact-active-class="ns-nav-link--active">
-            <q-icon name="home" aria-hidden="true" /> Ana Sayfa
-          </router-link>
-          <router-link to="/discover" active-class="ns-nav-link--active">
-            <q-icon name="explore" aria-hidden="true" /> Keşfet
-          </router-link>
-          <router-link to="/compose" active-class="ns-nav-link--active">
-            <q-icon name="edit_square" aria-hidden="true" /> Oluştur
-          </router-link>
-        </nav>
-
         <q-space />
-
         <q-btn
           flat
           round
           icon="tune"
           to="/onboarding"
           aria-label="İlgi alanlarını düzenle"
-          class="ns-header-action"
+          class="ns-mobile-action"
         />
         <q-avatar size="36px" color="blue-1" text-color="primary" aria-label="Deniz Yalın">
           DY
@@ -45,11 +30,18 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="drawerOpen" behavior="mobile" :width="292" bordered>
-      <div class="ns-drawer">
-        <div class="ns-drawer__header">
-          <router-link to="/" class="ns-brand" @click="drawerOpen = false">
-            <img src="/icons/favicon-96x96.png" alt="" width="36" height="36" />
+    <q-drawer
+      v-model="drawerOpen"
+      show-if-above
+      bordered
+      :width="252"
+      :breakpoint="1024"
+      class="ns-sidebar"
+    >
+      <aside class="ns-sidebar__inner" aria-label="Ana menü">
+        <div class="ns-sidebar__header">
+          <router-link to="/" class="ns-brand" @click="closeDrawerOnMobile">
+            <img src="/icons/favicon-96x96.png" alt="" width="40" height="40" />
             <span>Ne Sosyal?</span>
           </router-link>
           <q-btn
@@ -58,40 +50,72 @@
             dense
             icon="close"
             aria-label="Menüyü kapat"
+            class="lt-md"
             @click="drawerOpen = false"
           />
         </div>
 
-        <nav class="ns-drawer__nav" aria-label="Mobil navigasyon">
-          <router-link to="/" @click="drawerOpen = false">
-            <q-icon name="home" /> <span>Ana Sayfa</span>
+        <p class="ns-sidebar__tagline">Topluluk, merak ve keşif için.</p>
+
+        <nav class="ns-sidebar__nav" aria-label="Birincil navigasyon">
+          <router-link
+            to="/"
+            exact-active-class="ns-sidebar-link--active"
+            @click="closeDrawerOnMobile"
+          >
+            <q-icon name="home" aria-hidden="true" />
+            <span>Ana Sayfa</span>
           </router-link>
-          <router-link to="/discover" @click="drawerOpen = false">
-            <q-icon name="explore" /> <span>Keşfet</span>
+          <router-link
+            to="/discover"
+            active-class="ns-sidebar-link--active"
+            @click="closeDrawerOnMobile"
+          >
+            <q-icon name="explore" aria-hidden="true" />
+            <span>Keşfet</span>
           </router-link>
-          <router-link to="/compose" @click="drawerOpen = false">
-            <q-icon name="edit_square" /> <span>Gönderi oluştur</span>
-          </router-link>
-          <router-link to="/return?mode=returning" @click="drawerOpen = false">
-            <q-icon name="history" /> <span>Sen yokken</span>
-          </router-link>
-          <router-link to="/onboarding" @click="drawerOpen = false">
-            <q-icon name="tune" /> <span>İlgi alanlarım</span>
+          <router-link
+            to="/return?mode=returning"
+            active-class="ns-sidebar-link--active"
+            @click="closeDrawerOnMobile"
+          >
+            <q-icon name="history" aria-hidden="true" />
+            <span>Sen yokken</span>
           </router-link>
         </nav>
 
-        <div class="ns-drawer__profile">
+        <router-link to="/compose" class="ns-create-button" @click="closeDrawerOnMobile">
+          <q-icon name="edit_square" aria-hidden="true" />
+          <span>Gönderi oluştur</span>
+        </router-link>
+
+        <div class="ns-sidebar__section">
+          <span class="ns-sidebar__section-title">Tercihler</span>
+          <router-link to="/onboarding" @click="closeDrawerOnMobile">
+            <q-icon name="tune" aria-hidden="true" />
+            <div>
+              <strong>İlgi alanlarım</strong>
+              <small>{{ interestSummary }}</small>
+            </div>
+          </router-link>
+          <router-link to="/demo?demo=1" @click="closeDrawerOnMobile">
+            <q-icon name="smart_display" aria-hidden="true" />
+            <div>
+              <strong>Demo senaryosu</strong>
+              <small>Sunum kontrolleri</small>
+            </div>
+          </router-link>
+        </div>
+
+        <div class="ns-sidebar__profile">
           <q-avatar size="42px" color="blue-1" text-color="primary">DY</q-avatar>
           <div>
             <strong>{{ store.user.displayName }}</strong>
             <span>{{ store.user.handle }}</span>
           </div>
+          <q-icon name="more_horiz" aria-hidden="true" />
         </div>
-
-        <router-link to="/demo?demo=1" class="ns-demo-entry" @click="drawerOpen = false">
-          <q-icon name="smart_display" /> Demo senaryosu
-        </router-link>
-      </div>
+      </aside>
     </q-drawer>
 
     <q-page-container>
@@ -118,11 +142,24 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useQuasar } from 'quasar'
 import { usePrototypeStore } from '@/stores/prototype.js'
 
+const $q = useQuasar()
 const drawerOpen = ref(false)
 const store = usePrototypeStore()
+
+const interestSummary = computed(() => {
+  const labels = store.selectedInterestItems.slice(0, 2).map((interest) => interest.label)
+  if (labels.length === 0) return 'Henüz seçim yapılmadı'
+  const remaining = Math.max(0, store.selectedInterestItems.length - labels.length)
+  return remaining ? `${labels.join(', ')} +${remaining}` : labels.join(', ')
+})
+
+function closeDrawerOnMobile() {
+  if ($q.screen.lt.md) drawerOpen.value = false
+}
 </script>
 
 <style scoped>
@@ -131,25 +168,31 @@ const store = usePrototypeStore()
   background: var(--ns-bg-subtle);
 }
 
-.ns-header {
+.ns-mobile-header {
   color: var(--ns-text);
   background: rgb(255 255 255 / 96%);
   border-bottom: 1px solid var(--ns-border);
   box-shadow: none;
 }
 
-.ns-toolbar {
-  width: min(100%, 1180px);
+.ns-mobile-toolbar {
   min-height: 64px;
-  padding: 0 20px;
-  margin: 0 auto;
+  padding: 0 12px;
+}
+
+.ns-menu-button,
+.ns-mobile-action {
+  width: 44px;
+  height: 44px;
+  color: var(--ns-text-secondary);
 }
 
 .ns-menu-button {
-  width: 44px;
-  height: 44px;
   margin-right: 4px;
-  color: var(--ns-text-secondary);
+}
+
+.ns-mobile-action {
+  margin-right: 2px;
 }
 
 .ns-brand {
@@ -157,141 +200,186 @@ const store = usePrototypeStore()
   gap: 10px;
   align-items: center;
   color: var(--ns-text);
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 800;
   text-decoration: none;
   white-space: nowrap;
 }
 
 .ns-brand img {
-  border-radius: 10px;
+  border-radius: 11px;
 }
 
-.ns-desktop-nav {
-  display: flex;
-  gap: 4px;
-  align-items: stretch;
-  align-self: stretch;
-  margin-left: 40px;
-}
-
-.ns-desktop-nav a {
-  position: relative;
-  display: flex;
-  gap: 7px;
-  align-items: center;
-  padding: 0 14px;
-  color: var(--ns-text-secondary);
-  font-size: 13px;
-  font-weight: 650;
-  text-decoration: none;
-}
-
-.ns-desktop-nav a::after {
-  position: absolute;
-  right: 14px;
-  bottom: 0;
-  left: 14px;
-  height: 3px;
-  content: '';
-  background: transparent;
-  border-radius: 3px 3px 0 0;
-}
-
-.ns-desktop-nav a:hover,
-.ns-desktop-nav .ns-nav-link--active {
-  color: var(--ns-brand);
-}
-
-.ns-desktop-nav .ns-nav-link--active::after {
-  background: var(--ns-brand);
-}
-
-.ns-header-action {
-  width: 44px;
-  height: 44px;
-  margin-right: 4px;
-  color: var(--ns-text-secondary);
-}
-
-.ns-drawer {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-  padding: 16px;
+.ns-sidebar :deep(.q-drawer__content) {
+  overflow: hidden;
   background: var(--ns-surface);
 }
 
-.ns-drawer__header,
-.ns-drawer__profile {
+.ns-sidebar__inner {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 20px 16px 16px;
+}
+
+.ns-sidebar__header,
+.ns-sidebar__profile {
   display: flex;
   align-items: center;
 }
 
-.ns-drawer__header {
+.ns-sidebar__header {
   justify-content: space-between;
   min-height: 48px;
 }
 
-.ns-drawer__nav {
-  display: grid;
-  gap: 4px;
-  padding: 24px 0;
+.ns-sidebar__tagline {
+  margin: 8px 8px 22px;
+  color: var(--ns-text-tertiary);
+  font-size: 11px;
+  line-height: 1.4;
 }
 
-.ns-drawer__nav a {
+.ns-sidebar__nav {
+  display: grid;
+  gap: 4px;
+}
+
+.ns-sidebar__nav a,
+.ns-sidebar__section > a {
+  color: var(--ns-text-secondary);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+}
+
+.ns-sidebar__nav a {
   display: grid;
   grid-template-columns: 28px minmax(0, 1fr);
   gap: 12px;
   align-items: center;
   min-height: 48px;
   padding: 0 12px;
-  color: var(--ns-text-secondary);
   font-size: 14px;
   font-weight: 650;
-  text-decoration: none;
-  border-radius: var(--radius-sm);
 }
 
-.ns-drawer__nav a:hover,
-.ns-drawer__nav a.router-link-active {
+.ns-sidebar__nav .q-icon {
+  font-size: 22px;
+}
+
+.ns-sidebar__nav a:hover,
+.ns-sidebar__nav .ns-sidebar-link--active {
   color: var(--ns-brand);
   background: var(--ns-brand-soft);
 }
 
-.ns-drawer__nav .q-icon {
-  font-size: 22px;
+.ns-create-button {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  margin: 18px 0 24px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  background: var(--ns-brand);
+  border-radius: var(--radius-sm);
 }
 
-.ns-drawer__profile {
+.ns-create-button:hover {
+  background: #0877e8;
+}
+
+.ns-sidebar__section {
+  display: grid;
+  gap: 4px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ns-border);
+}
+
+.ns-sidebar__section-title {
+  padding: 0 10px 8px;
+  color: var(--ns-text-tertiary);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.ns-sidebar__section > a {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
   gap: 10px;
-  padding: 16px 8px;
+  align-items: center;
+  min-height: 54px;
+  padding: 7px 10px;
+}
+
+.ns-sidebar__section > a:hover {
+  color: var(--ns-brand);
+  background: var(--ns-surface-hover);
+}
+
+.ns-sidebar__section .q-icon {
+  font-size: 20px;
+}
+
+.ns-sidebar__section a > div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ns-sidebar__section strong,
+.ns-sidebar__section small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ns-sidebar__section strong {
+  color: var(--ns-text);
+  font-size: 12px;
+}
+
+.ns-sidebar__section small {
+  color: var(--ns-text-tertiary);
+  font-size: 10px;
+}
+
+.ns-sidebar__profile {
+  gap: 10px;
+  padding: 16px 8px 0;
   margin-top: auto;
   border-top: 1px solid var(--ns-border);
 }
 
-.ns-drawer__profile > div {
+.ns-sidebar__profile > div {
   display: grid;
+  flex: 1;
+  min-width: 0;
 }
 
-.ns-drawer__profile strong {
-  font-size: 13px;
+.ns-sidebar__profile strong,
+.ns-sidebar__profile span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.ns-drawer__profile span {
-  color: var(--ns-text-secondary);
-  font-size: 11px;
-}
-
-.ns-demo-entry {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 8px;
-  color: var(--ns-text-tertiary);
+.ns-sidebar__profile strong {
   font-size: 12px;
-  text-decoration: none;
+}
+
+.ns-sidebar__profile span {
+  color: var(--ns-text-secondary);
+  font-size: 10px;
+}
+
+.ns-sidebar__profile > .q-icon {
+  color: var(--ns-text-tertiary);
 }
 
 .ns-mobile-footer {
@@ -330,12 +418,12 @@ const store = usePrototypeStore()
 }
 
 @media (max-width: 599px) {
-  .ns-toolbar {
-    padding: 0 12px;
+  .ns-brand {
+    font-size: 15px;
   }
 
-  .ns-brand span {
-    font-size: 15px;
+  .ns-sidebar__inner {
+    padding-top: 16px;
   }
 }
 
