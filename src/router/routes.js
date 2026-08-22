@@ -1,5 +1,10 @@
 const routes = [
   {
+    path: '/return',
+    name: 'return',
+    component: () => import('@/pages/ReentryPage.vue'),
+  },
+  {
     path: '/compose',
     name: 'compose',
     component: () => import('@/pages/ComposerPage.vue'),
