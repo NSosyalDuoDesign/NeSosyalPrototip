@@ -48,6 +48,7 @@ const initialState = () => ({
     attachment: null,
     interventionState: 'idle',
     interventionDismissed: false,
+    interventionResult: null,
   },
   retention: {
     lastVisit: currentDemoUser.lastVisit,
@@ -152,10 +153,63 @@ export const usePrototypeStore = defineStore('prototype', {
       this.composer.draftText = String(draftText ?? '')
       this.composer.interventionDismissed = false
       this.composer.interventionState = 'idle'
+      this.composer.interventionResult = null
     },
 
     setComposerAttachment(attachment) {
       this.composer.attachment = attachment ?? null
+    },
+
+    showComposerIntervention(result) {
+      this.composer.interventionState = 'visible'
+      this.composer.interventionDismissed = false
+      this.composer.interventionResult = result
+    },
+
+    hideComposerIntervention() {
+      this.composer.interventionState = 'idle'
+    },
+
+    publishComposerDraft() {
+      const body = this.composer.draftText.trim()
+      if (!body) return null
+
+      const post = {
+        id: 'post-demo-composer',
+        authorId: this.user.id,
+        author: { ...this.user },
+        body,
+        timestamp: '2026-08-22T12:30:00.000Z',
+        topicIds: this.user.selectedInterests.slice(0, 2),
+        engagement: { replies: 0, reposts: 0, likes: 0, bookmarks: 0 },
+        media: null,
+        poll: null,
+        quotedPost: null,
+        verifiedAuthor: false,
+        discoveryMetadata: {
+          daily: false,
+          weekly: false,
+          rising: false,
+          reason: 'local-demo',
+        },
+        overlooked: false,
+        feedbackState: FEEDBACK_STATES.neutral,
+        trendScore: 0,
+      }
+
+      this.posts = [post, ...this.posts.filter((item) => item.id !== post.id)]
+      this.clearComposer()
+      return post
+    },
+
+    clearComposer() {
+      this.composer = {
+        draftText: '',
+        attachment: null,
+        interventionState: 'idle',
+        interventionDismissed: false,
+        interventionResult: null,
+      }
     },
 
     setReturningUser(returningUser = true) {

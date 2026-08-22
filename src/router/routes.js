@@ -1,5 +1,10 @@
 const routes = [
   {
+    path: '/compose',
+    name: 'compose',
+    component: () => import('@/pages/ComposerPage.vue'),
+  },
+  {
     path: '/discover',
     name: 'discover',
     component: () => import('@/pages/DiscoverPage.vue'),
