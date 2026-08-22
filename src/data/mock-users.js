@@ -6,7 +6,7 @@ export const demoUsers = Object.freeze([
     avatar: null,
     bio: 'Teknoloji, bilim ve iyi anlatılmış hikâyelerin peşinde.',
     onboardingCompleted: false,
-    selectedInterests: ['teknoloji', 'bilim', 'oyun'],
+    selectedInterests: [],
     experiencePreset: 'balanced',
     followingCount: 184,
     followerCount: 326,
