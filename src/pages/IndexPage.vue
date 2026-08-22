@@ -501,12 +501,18 @@ const discoveryLinks = [
 
 @media (min-width: 960px) {
   .home-shell {
-    grid-template-columns: minmax(0, 720px) minmax(260px, 1fr);
     padding-top: 36px;
   }
 
   .home-aside {
     display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 960px) and (max-width: 1199px) {
+  .home-aside {
+    grid-template-columns: 1fr;
   }
 }
 

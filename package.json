@@ -1,7 +1,7 @@
 {
-  "name": "",
+  "name": "ne-sosyal-prototip",
   "version": "0.0.1",
-  "description": "A Quasar Project",
+  "description": "NSosyal yenilik deneyimi için mobil öncelikli etkileşimli prototip",
   "productName": "Ne Sosyal? Prototip",
   "author": "tavus-umit <umit.tavus@ug.bilkent.edu.tr>",
   "type": "module",
