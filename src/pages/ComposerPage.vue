@@ -148,7 +148,10 @@ const interventionVisible = computed(
 )
 
 onMounted(() => {
-  if (route.query.demo === 'harsh' && !store.composer.draftText) {
+  if (
+    (route.query.demo === 'harsh' || route.query.demoDraft === 'harsh') &&
+    !store.composer.draftText
+  ) {
     store.setComposerDraft(DEMO_HARSH_DRAFT)
   }
 })

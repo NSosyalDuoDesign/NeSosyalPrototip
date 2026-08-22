@@ -1,5 +1,10 @@
 const routes = [
   {
+    path: '/demo',
+    name: 'demo',
+    component: () => import('@/pages/DemoPage.vue'),
+  },
+  {
     path: '/return',
     name: 'return',
     component: () => import('@/pages/ReentryPage.vue'),
