@@ -1,7 +1,24 @@
 <template>
   <q-header class="top-app-bar">
     <q-toolbar class="top-app-bar__toolbar">
-      <q-btn flat round dense icon="menu" aria-label="Menüyü aç" class="top-app-bar__action" />
+      <q-btn flat round dense icon="menu" aria-label="Menüyü aç" class="top-app-bar__action">
+        <q-menu class="mobile-more-menu">
+          <q-list style="min-width: 220px">
+            <q-item v-close-popup clickable to="/campaign">
+              <q-item-section avatar><q-icon name="qr_code_scanner" /></q-item-section>
+              <q-item-section>
+                <q-item-label>QR keşif rotası</q-item-label>
+                <q-item-label caption>Ne Sosyal? kampanyası</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-separator />
+            <q-item v-close-popup clickable to="/settings">
+              <q-item-section avatar><q-icon name="settings" /></q-item-section>
+              <q-item-section>Ayarlar</q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
 
       <RouterLink to="/home" class="top-app-bar__brand" aria-label="NSosyal ana sayfa">
         NSosyal

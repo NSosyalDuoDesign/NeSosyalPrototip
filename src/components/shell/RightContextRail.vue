@@ -20,6 +20,15 @@
       </template>
     </q-input>
 
+    <RouterLink to="/campaign" class="campaign-entry">
+      <q-icon name="qr_code_scanner" size="24px" />
+      <span>
+        <small>Ne Sosyal?</small>
+        <strong>QR keşif rotasını aç</strong>
+      </span>
+      <q-icon name="arrow_forward" size="18px" />
+    </RouterLink>
+
     <SurfacePanel title="Bugün konuşulanlar">
       <ol class="trend-list">
         <li v-for="trend in trends" :key="trend.label">
@@ -79,6 +88,40 @@ const suggestions = [
   background: var(--ns-bg-subtle) !important;
   border-radius: var(--radius-md);
   box-shadow: none;
+}
+
+.campaign-entry {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  color: var(--ns-text);
+  text-decoration: none;
+  background: var(--ns-brand-soft);
+  border: 1px solid color-mix(in srgb, var(--ns-brand) 22%, var(--ns-border));
+  border-radius: var(--radius-md);
+}
+
+.campaign-entry > .q-icon:first-child {
+  color: var(--ns-brand);
+}
+
+.campaign-entry span {
+  display: grid;
+  min-width: 0;
+}
+
+.campaign-entry small {
+  color: var(--ns-text-secondary);
+  font-size: 0.6875rem;
+}
+
+.campaign-entry strong {
+  overflow: hidden;
+  font-size: 0.8125rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .trend-list {

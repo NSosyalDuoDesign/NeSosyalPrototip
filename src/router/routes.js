@@ -4,6 +4,27 @@ const routes = [
     redirect: '/home',
   },
   {
+    path: '/campaign',
+    component: () => import('@/layouts/CampaignLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'campaign',
+        component: () => import('@/pages/campaign/CampaignLandingPage.vue'),
+      },
+      {
+        path: 'clue/:stage',
+        name: 'campaign-clue',
+        component: () => import('@/pages/campaign/CampaignCluePage.vue'),
+      },
+      {
+        path: 'reward',
+        name: 'campaign-reward',
+        component: () => import('@/pages/campaign/CampaignRewardPage.vue'),
+      },
+    ],
+  },
+  {
     path: '/',
     component: () => import('@/layouts/MainLayout.vue'),
     children: [
