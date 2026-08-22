@@ -1,13 +1,5 @@
 <template>
   <div class="reentry-page">
-    <header class="reentry-header">
-      <q-btn flat round dense icon="arrow_back" to="/" aria-label="Ana sayfaya dön" />
-      <div>
-        <span>Ne Sosyal?</span>
-        <h1>Geri dönüş</h1>
-      </div>
-    </header>
-
     <main class="reentry-shell">
       <section class="reentry-intro" aria-labelledby="reentry-page-title">
         <span>Devamlılık, baskı değil</span>
@@ -151,7 +143,7 @@ function showReturningSummary() {
 
 <style scoped>
 .reentry-page {
-  min-height: 100dvh;
+  min-height: 100%;
   color: var(--ns-text, #15171a);
   background: var(--ns-bg-subtle, #f7f8fa);
 }

@@ -1,26 +1,5 @@
 <template>
   <div class="discover-page">
-    <header class="discover-header">
-      <div class="discover-header__title">
-        <q-btn
-          flat
-          round
-          dense
-          icon="arrow_back"
-          to="/"
-          aria-label="Ana sayfaya dön"
-          class="discover-header__back"
-        />
-        <div>
-          <span>Ne Sosyal?</span>
-          <h1>Keşfet</h1>
-        </div>
-      </div>
-      <span v-if="store.selectedInterestItems.length" class="discover-header__personalized">
-        <q-icon name="tune" aria-hidden="true" /> İlgi alanlarına göre
-      </span>
-    </header>
-
     <main class="discover-shell">
       <section class="discover-intro" aria-labelledby="discover-title">
         <div>
@@ -266,7 +245,7 @@ function topicReason(topic) {
 
 <style scoped>
 .discover-page {
-  min-height: 100dvh;
+  min-height: 100%;
   color: var(--ns-text, #15171a);
   background: var(--ns-bg-subtle, #f7f8fa);
 }
