@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">Robotik laboratuvarı</title>
+  <desc id="desc">Bir çalışma masasında küçük bir robot kolun temsili çizimi</desc>
+  <rect width="960" height="540" fill="#eaf4ff"/>
+  <circle cx="730" cy="108" r="170" fill="#d9edff"/>
+  <rect x="130" y="388" width="700" height="22" rx="11" fill="#9fb4c8"/>
+  <rect x="210" y="410" width="24" height="92" rx="8" fill="#72889d"/>
+  <rect x="726" y="410" width="24" height="92" rx="8" fill="#72889d"/>
+  <rect x="405" y="322" width="150" height="66" rx="18" fill="#1687f8"/>
+  <circle cx="480" cy="321" r="38" fill="#ffffff" stroke="#1687f8" stroke-width="18"/>
+  <path d="M480 282 L554 211 L622 240" fill="none" stroke="#1687f8" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="554" cy="211" r="25" fill="#ffffff" stroke="#1687f8" stroke-width="13"/>
+  <path d="M614 226 l42 -29 M621 242 l48 12" fill="none" stroke="#6257ee" stroke-width="16" stroke-linecap="round"/>
+  <rect x="254" y="242" width="104" height="76" rx="12" fill="#ffffff" stroke="#c8d8e8" stroke-width="8"/>
+  <circle cx="286" cy="280" r="12" fill="#20c6e8"/>
+  <circle cx="326" cy="280" r="12" fill="#6257ee"/>
+</svg>
+
