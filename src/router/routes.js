@@ -1,19 +1,37 @@
 const routes = [
   {
     path: '/',
+    redirect: '/home',
+  },
+  {
+    path: '/',
     component: () => import('@/layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('@/pages/IndexPage.vue') },
-      { path: 'second', component: () => import('@/pages/SecondPage.vue') }
+      { path: 'home', name: 'home', component: () => import('@/pages/IndexPage.vue') },
+      {
+        path: 'discover',
+        name: 'discover',
+        component: () => import('@/pages/PlaceholderPage.vue'),
+      },
+      { path: 'create', name: 'create', component: () => import('@/pages/PlaceholderPage.vue') },
+      {
+        path: 'notifications',
+        name: 'notifications',
+        component: () => import('@/pages/PlaceholderPage.vue'),
+      },
+      { path: 'profile', name: 'profile', component: () => import('@/pages/PlaceholderPage.vue') },
+      {
+        path: 'settings',
+        name: 'settings',
+        component: () => import('@/pages/PlaceholderPage.vue'),
+      },
+      { path: 'second', redirect: '/discover' },
     ],
   },
-
-  // Always leave this as last one,
-  // but you can also remove it
   {
     path: '/:catchAll(.*)*',
     component: () => import('@/pages/ErrorNotFound.vue'),
-  }
+  },
 ]
 
 export default routes
