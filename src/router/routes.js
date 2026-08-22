@@ -1,5 +1,10 @@
 const routes = [
   {
+    path: '/discover',
+    name: 'discover',
+    component: () => import('@/pages/DiscoverPage.vue'),
+  },
+  {
     path: '/onboarding',
     name: 'onboarding',
     component: () => import('@/pages/OnboardingPage.vue'),
