@@ -31,7 +31,7 @@
       <strong>{{ context.visualTitle }}</strong>
       <p>{{ context.visualDetail }}</p>
       <div class="campaign-context-hero__bridge">
-        <q-icon name="qr_code_2" aria-hidden="true" />
+        <q-icon name="forum" aria-hidden="true" />
         <span>Bu anın NSosyal konuşması</span>
       </div>
     </aside>

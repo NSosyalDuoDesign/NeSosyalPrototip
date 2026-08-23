@@ -17,7 +17,7 @@ export const campaignContexts = Object.freeze([
     hook: 'Az önceki sahnede Deniz, mektubu ilk kez gördüğünü söyledi. İzleyiciler ayrıntılarda başka bir hikâye buluyor.',
     momentLabel: 'Son sahne · 22.14',
     visualTitle: 'Kapı kapanmadan 8 saniye önce',
-    visualDetail: 'Ekrandaki QR, bu sahne etrafında oluşan canlı sosyal katmanı açtı.',
+    visualDetail: 'Bu sahne etrafında oluşan canlı sosyal katman şimdi açık.',
     tags: ['Bölüm teorileri', 'Canlı izleyici', 'Sahne ayrıntıları'],
     reaction: {
       question: 'Deniz mektubu daha önce görmüş müydü?',
@@ -120,7 +120,7 @@ export const campaignContexts = Object.freeze([
     hook: 'Program konuyu ekonomi ve trafik üzerinden tartışıyor. NSosyal’da yayını izleyenler erişim, esnaf ve kamusal alan taraflarını birlikte konuşuyor.',
     momentLabel: 'Canlı yayın · 31. dakika',
     visualTitle: 'Şehir merkezinin hafta sonu kullanımı',
-    visualDetail: 'QR, ekrandaki tartışmanın etrafında oluşan farklı görüşleri tek yerde açıyor.',
+    visualDetail: 'Ekrandaki tartışmanın etrafında oluşan farklı görüşler burada buluşuyor.',
     tags: ['Kent yaşamı', 'Ulaşım', 'Yerel esnaf'],
     reaction: {
       question: 'Sana en yakın yaklaşım hangisi?',
@@ -225,16 +225,15 @@ export const campaignContexts = Object.freeze([
   {
     id: 'city',
     sourceType: 'Şehir ilanı',
-    sourceLabel: 'Ankara · Açık hava QR’ı',
-    sourceDetail: 'Bulunduğun yer için konum izni gerekmez',
+    sourceLabel: 'Ankara · Açık hava gündemi',
+    sourceDetail: 'Ankara’dan görüşler canlı akıyor',
     icon: 'location_city',
     accent: 'cyan',
     headline: 'Ankara bugün bunu konuşuyor.',
     hook: 'Gece ulaşımının hafta sonları 02.00’ye kadar uzatılması öneriliyor. Şehirde yaşayanların öncelikleri aynı değil.',
     momentLabel: 'Kızılay · Bugün',
     visualTitle: 'Gece ulaşımı nasıl devam etmeli?',
-    visualDetail:
-      'Bu QR, ilanı görenleri Ankara’daki gerçek zamanlı yerel konuşmayla buluşturuyor.',
+    visualDetail: 'Ankara’daki gerçek zamanlı yerel konuşma burada büyüyor.',
     tags: ['Ankara', 'Gece ulaşımı', 'Şehir yaşamı'],
     reaction: {
       question: 'Gece seferleri için en doğru başlangıç ne?',
@@ -340,7 +339,7 @@ export const campaignContexts = Object.freeze([
     id: 'launch',
     sourceType: 'Teknoloji etkinliği',
     sourceLabel: 'Afet iletişim cihazı · Canlı tanıtım',
-    sourceDetail: 'Tanıtım alanındaki QR’dan açıldı',
+    sourceDetail: 'Canlı tanıtım sürüyor',
     icon: 'cell_tower',
     accent: 'blue',
     headline: 'Bu teknolojide ilk öncelik ne olmalı?',
@@ -348,7 +347,7 @@ export const campaignContexts = Object.freeze([
     momentLabel: 'Canlı tanıtım · Demo alanı',
     visualTitle: 'Bağlantı yokken iletişim',
     visualDetail:
-      'Etkinlik QR’ı, teknik sunumu kullanıcı ihtiyaçları ve saha deneyimleriyle tamamlıyor.',
+      'Teknik sunum, kullanıcı ihtiyaçları ve saha deneyimleriyle birlikte tartışılıyor.',
     tags: ['Afet iletişimi', 'Saha deneyimi', 'Erişilebilir teknoloji'],
     reaction: {
       question: 'Sence ilk öncelik hangisi?',
