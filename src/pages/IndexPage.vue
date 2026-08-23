@@ -60,71 +60,69 @@
             </div>
             <span class="feed-control-note"><q-icon name="tune" /> Kontrol sende</span>
           </div>
-          <div class="home-feed__list">
+          <q-banner
+            v-if="feedbackNotice"
+            class="feedback-notice"
+            rounded
+            role="status"
+            aria-live="polite"
+          >
+            <template #avatar><q-icon :name="feedbackNotice.icon" /></template>
+            {{ feedbackNotice.message }}
+            <template #action>
+              <q-btn flat no-caps color="primary" label="Geri al" @click="undoFeedback" />
+            </template>
+          </q-banner>
+
+          <div v-if="isLoading" class="feed-state feed-state--loading" aria-label="Akış yükleniyor">
+            <article v-for="item in 3" :key="item" class="feed-skeleton">
+              <div><q-skeleton type="QAvatar" /><q-skeleton type="text" width="38%" /></div>
+              <q-skeleton type="text" />
+              <q-skeleton type="text" width="82%" />
+              <q-skeleton height="156px" />
+            </article>
+          </div>
+
+          <div v-else-if="hasError" class="feed-state feed-state--message" role="alert">
+            <q-icon name="wifi_off" size="30px" aria-hidden="true" />
+            <h3>Akış şu anda yenilenemedi</h3>
+            <p>Bağlantını kontrol edip tekrar deneyebilirsin.</p>
+            <q-btn outline no-caps color="primary" label="Tekrar dene" @click="clearPreviewState" />
+          </div>
+
+          <div v-else-if="isEmpty || visibleFeed.length === 0" class="feed-state feed-state--message">
+            <q-icon name="dynamic_feed" size="30px" aria-hidden="true" />
+            <h3>Akışını birlikte oluşturalım</h3>
+            <p>En az üç ilgi alanı seçtiğinde sana yakın içerikler burada sıralanır.</p>
+            <q-btn unelevated no-caps color="primary" label="İlgi alanı seç" to="/onboarding" />
+          </div>
+
+          <div v-else class="home-feed__list">
             <HomeFeedPost
               v-for="post in visibleFeed"
               :key="post.id"
               :post="post"
               :topics="store.interests"
               :feedback-state="post.feedbackState"
-              @feedback="(feedback) => store.setPostFeedback(post.id, feedback)"
+              @feedback="(feedback) => applyFeedback(post, feedback)"
             />
           </div>
         </section>
       </div>
-
-      <aside class="home-aside" aria-label="Kısayollar ve gündem">
-        <section class="aside-section">
-          <span class="home-eyebrow">Kaldığın yerden</span>
-          <h2>Sen yokken neler oldu?</h2>
-          <p>
-            İlgi alanlarında değişen başlıkları ve daha az kişinin gördüğü içerikleri kısa bir
-            özette yakala.
-          </p>
-          <q-btn
-            flat
-            no-caps
-            color="primary"
-            label="Geri dönüş özetini aç"
-            icon-right="arrow_forward"
-            to="/return?mode=returning"
-          />
-        </section>
-
-        <section class="aside-section aside-section--topics">
-          <div class="aside-heading"><span>Yükselenler</span><q-icon name="trending_up" /></div>
-          <ol>
-            <li v-for="(topic, index) in risingTopics" :key="topic.id">
-              <span>{{ index + 1 }}</span>
-              <div>
-                <strong>{{ topic.label }}</strong
-                ><small>{{ topic.description }}</small>
-              </div>
-            </li>
-          </ol>
-          <router-link to="/discover?tab=daily">Bugünün tamamını keşfet</router-link>
-        </section>
-
-        <section class="aside-section aside-section--values">
-          <q-icon name="forum" aria-hidden="true" />
-          <div>
-            <strong>Fikrini söyle, kişiyi değil.</strong>
-            <span>Paylaşırken yapıcı dil desteği yanında.</span>
-          </div>
-          <router-link to="/compose">Gönderi oluştur</router-link>
-        </section>
-      </aside>
     </main>
   </q-page>
 </template>
 
 <script setup>
 import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import HomeFeedPost from '@/components/feed/HomeFeedPost.vue'
 import { usePrototypeStore } from '@/stores/prototype.js'
 
+const route = useRoute()
+const router = useRouter()
 const store = usePrototypeStore()
-const displayedPostIds = ref(store.personalizedFeed.slice(0, 6).map((post) => post.id))
+const feedbackNotice = ref(null)
 
 const firstName = computed(() => store.user.displayName.split(' ')[0])
 const selectedLabels = computed(() => {
@@ -135,10 +133,46 @@ const selectedLabels = computed(() => {
   return `${labels.join(', ')} ve ${last}`
 })
 const visibleFeed = computed(() => {
-  const postsById = Object.fromEntries(store.personalizedFeed.map((post) => [post.id, post]))
-  return displayedPostIds.value.map((postId) => postsById[postId]).filter(Boolean)
+  return store.personalizedFeed
+    .filter((post) => post.feedbackState !== 'notInterested')
+    .slice(0, 6)
 })
-const risingTopics = computed(() => store.discovery.risingTopics.slice(0, 4))
+const previewState = computed(() => String(route.query.state ?? ''))
+const isLoading = computed(() => previewState.value === 'loading')
+const hasError = computed(() => previewState.value === 'error')
+const isEmpty = computed(() => previewState.value === 'empty')
+
+function applyFeedback(post, feedback) {
+  const previousFeedback = post.feedbackState
+  store.setPostFeedback(post.id, feedback)
+
+  if (feedback === 'neutral') {
+    feedbackNotice.value = null
+    return
+  }
+
+  feedbackNotice.value = {
+    postId: post.id,
+    previousFeedback,
+    icon: feedback === 'interested' ? 'recommend' : 'visibility_off',
+    message:
+      feedback === 'interested'
+        ? 'Akışın güncellendi. Buna benzer içerikler daha görünür olacak.'
+        : 'Gönderi gizlendi. Buna benzer içerikleri daha az göstereceğiz.',
+  }
+}
+
+function undoFeedback() {
+  if (!feedbackNotice.value) return
+  store.setPostFeedback(feedbackNotice.value.postId, feedbackNotice.value.previousFeedback)
+  feedbackNotice.value = null
+}
+
+function clearPreviewState() {
+  const query = { ...route.query }
+  delete query.state
+  router.replace({ query })
+}
 
 const discoveryLinks = [
   {
@@ -172,9 +206,7 @@ const discoveryLinks = [
 }
 
 .home-shell {
-  display: grid;
-  gap: 28px;
-  width: min(100%, 1100px);
+  width: 100%;
   padding: 28px 20px 72px;
   margin: 0 auto;
 }
@@ -187,9 +219,7 @@ const discoveryLinks = [
 
 .home-welcome,
 .composer-entry,
-.section-heading,
-.aside-heading,
-.aside-section--values {
+.section-heading {
   display: flex;
   align-items: center;
 }
@@ -217,9 +247,7 @@ const discoveryLinks = [
 
 .home-welcome h1,
 .home-welcome p,
-.section-heading h2,
-.aside-section h2,
-.aside-section p {
+.section-heading h2 {
   margin: 0;
 }
 
@@ -378,141 +406,82 @@ const discoveryLinks = [
   border-radius: var(--radius-lg);
 }
 
-.home-aside {
-  display: none;
-  gap: 16px;
-  align-content: start;
-}
-
-.aside-section {
-  padding: 18px;
+.feedback-notice {
+  color: var(--ns-text);
   background: var(--ns-surface);
   border: 1px solid var(--ns-border);
-  border-radius: var(--radius-md);
-}
-
-.aside-section h2 {
-  margin-top: 5px;
-  font-size: 18px;
-  line-height: 1.3;
-}
-
-.aside-section p {
-  margin-top: 8px;
-  color: var(--ns-text-secondary);
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.aside-section > .q-btn {
-  min-height: 40px;
-  padding-right: 0;
-  padding-left: 0;
-  margin-top: 8px;
-  font-size: 12px;
-}
-
-.aside-heading {
-  justify-content: space-between;
-  font-size: 14px;
-  font-weight: 750;
-}
-
-.aside-heading .q-icon {
   color: var(--ns-brand);
 }
 
-.aside-section--topics ol {
-  padding: 0;
-  margin: 12px 0;
-  list-style: none;
+.feedback-notice .q-btn {
+  min-height: 40px;
 }
 
-.aside-section--topics li {
+.feed-state--loading {
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr);
-  gap: 8px;
-  padding: 11px 0;
+  overflow: hidden;
+  border: 1px solid var(--ns-border);
+  border-radius: var(--radius-lg);
+}
+
+.feed-skeleton {
+  display: grid;
+  gap: 10px;
+  padding: 20px;
+  background: var(--ns-surface);
   border-bottom: 1px solid var(--ns-border);
 }
 
-.aside-section--topics li > span {
-  color: var(--ns-text-tertiary);
-  font-size: 11px;
-  font-weight: 750;
+.feed-skeleton:last-child {
+  border-bottom: 0;
 }
 
-.aside-section--topics li > div {
-  display: grid;
-  gap: 3px;
-}
-
-.aside-section--topics strong {
-  font-size: 12px;
-}
-
-.aside-section--topics small {
-  color: var(--ns-text-secondary);
-  font-size: 10px;
-}
-
-.aside-section--topics > a,
-.aside-section--values > a {
-  color: var(--ns-brand);
-  font-size: 11px;
-  font-weight: 650;
-  text-decoration: none;
-}
-
-.aside-section--values {
-  display: grid;
-  grid-template-columns: 36px minmax(0, 1fr);
+.feed-skeleton > div {
+  display: flex;
   gap: 10px;
+  align-items: center;
 }
 
-.aside-section--values > .q-icon {
+.feed-state--message {
   display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
+  gap: 8px;
+  justify-items: center;
+  min-height: 260px;
+  padding: 36px 24px;
+  text-align: center;
+  background: var(--ns-surface);
+  border: 1px solid var(--ns-border);
+  border-radius: var(--radius-lg);
+}
+
+.feed-state--message .q-icon {
   color: var(--ns-brand);
-  background: var(--ns-brand-soft);
-  border-radius: 9px;
 }
 
-.aside-section--values > div {
-  display: grid;
-  gap: 3px;
+.feed-state--message h3,
+.feed-state--message p {
+  margin: 0;
 }
 
-.aside-section--values strong {
-  font-size: 12px;
+.feed-state--message h3 {
+  font-size: 17px;
 }
 
-.aside-section--values span {
+.feed-state--message p {
+  max-width: 360px;
   color: var(--ns-text-secondary);
-  font-size: 10px;
-  line-height: 1.4;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
-.aside-section--values > a {
-  grid-column: 2;
+.feed-state--message .q-btn {
+  min-height: 44px;
+  margin-top: 4px;
 }
 
 @media (min-width: 960px) {
   .home-shell {
     padding-top: 36px;
-  }
-
-  .home-aside {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 960px) and (max-width: 1199px) {
-  .home-aside {
-    grid-template-columns: 1fr;
   }
 }
 
