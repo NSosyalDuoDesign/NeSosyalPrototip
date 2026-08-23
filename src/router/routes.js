@@ -25,12 +25,19 @@ const routes = [
       {
         path: 'clue/:stage',
         name: 'campaign-clue',
-        component: () => import('@/pages/campaign/CampaignCluePage.vue'),
+        redirect: (to) => ({
+          path: '/campaign',
+          query: { ...to.query, context: to.query.context ?? 'series', mode: 'visitor' },
+        }),
       },
       {
         path: 'reward',
         name: 'campaign-reward',
-        component: () => import('@/pages/campaign/CampaignRewardPage.vue'),
+        redirect: (to) => ({
+          name: 'campaign-context-hub',
+          params: { contextId: to.query.context ?? 'series' },
+          query: { source: 'legacy', ...to.query },
+        }),
       },
     ],
   },
@@ -53,6 +60,11 @@ const routes = [
         path: 'settings',
         name: 'settings',
         component: () => import('@/pages/ExperienceSettingsPage.vue'),
+      },
+      {
+        path: 'context/:contextId',
+        name: 'campaign-context-hub',
+        component: () => import('@/pages/campaign/CampaignContextHubPage.vue'),
       },
       { path: 'second', redirect: '/discover' },
     ],

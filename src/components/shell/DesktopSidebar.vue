@@ -42,12 +42,12 @@ const navItems = [
   { label: 'Bildirimler', icon: 'notifications_none', to: '/notifications', badge: '92' },
   { label: 'Mesajlar', icon: 'chat_bubble_outline', to: '/return?mode=returning' },
   { label: 'Keşfet', icon: 'explore', to: '/discover' },
-  { label: 'Nod Oyna', icon: 'pets', to: '/campaign' },
+  { label: 'Canlı Gündem', icon: 'forum', to: '/context/series' },
   { label: 'Topluluklar', icon: 'star_outline', to: '/discover?tab=weekly' },
   { label: 'Kaydedilenler', icon: 'bookmark_border', to: '/discover?tab=overlooked' },
   { label: 'Beğeniler', icon: 'rocket_launch', to: '/home?filter=liked' },
   { label: 'Ayarlar', icon: 'tune', to: '/settings' },
-  { label: 'TEKNOFEST Kayıt', icon: 'qr_code_scanner', to: '/campaign?source=register' },
+  { label: 'Teknoloji Gündemi', icon: 'cell_tower', to: '/context/launch' },
 ]
 
 const route = useRoute()

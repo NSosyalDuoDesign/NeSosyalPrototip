@@ -1,185 +1,225 @@
 <template>
-  <q-page class="campaign-landing">
-    <main class="campaign-landing__content">
-      <section class="campaign-hero" aria-labelledby="campaign-title">
-        <p class="campaign-hero__eyebrow">NSosyal keşif rotası</p>
-        <h1 id="campaign-title">Şehrin içinde üç işaret. Sonunda sana ait bir keşif.</h1>
-        <p class="campaign-hero__lead">
-          Etrafındaki QR kodlarını takip et, ipuçlarını birleştir ve NSosyal’de saklı kalan rotayı
-          aç. Kamera gerektirmeyen kısa bir prototip deneyimi.
+  <q-page class="campaign-entry-page">
+    <main class="campaign-entry-shell">
+      <div class="campaign-entry-note" role="note">
+        <q-icon name="qr_code_scanner" aria-hidden="true" />
+        <div>
+          <strong>Bu QR, izlediğin veya karşılaştığın ana ait.</strong>
+          <span>Üye olmadan önce topluluğun ne düşündüğünü görebilirsin.</span>
+        </div>
+      </div>
+
+      <CampaignContextHero :context="context" />
+
+      <CampaignReactionPanel
+        :context="context"
+        :selected-option-id="selectedReaction"
+        :show-results="hasLayer('pulse')"
+        @select="selectReaction"
+      />
+
+      <CampaignSocialLayers
+        :context="context"
+        :revealed-layers="revealedLayers"
+        @convert="beginConversion"
+        @reveal="revealLayer"
+        @reply="revealLayer('live')"
+      />
+
+      <Transition name="campaign-conversion">
+        <CampaignConversionPanel
+          v-if="conversionActive"
+          ref="conversionPanel"
+          :context="context"
+          :selected-option-id="selectedReaction"
+          @continue="continueInNSosyal"
+        />
+      </Transition>
+
+      <footer class="campaign-entry-footer">
+        <img src="/brand/nsosyal-logo.png" alt="" width="28" height="28" />
+        <p>
+          Bu deneyim, dışarıdaki anı NSosyal’daki sosyal konuşmaya bağlayan frontend prototipidir.
+          Kamera, konum veya gerçek üyelik kullanılmaz.
         </p>
-
-        <div class="campaign-hero__actions">
-          <q-btn
-            unelevated
-            no-caps
-            color="primary"
-            :label="completedCount > 0 ? 'Rotaya devam et' : 'İlk ipucunu aç'"
-            icon-right="arrow_forward"
-            :to="nextRoute"
-            class="campaign-hero__primary"
-          />
-          <q-btn
-            v-if="completedCount > 0"
-            flat
-            no-caps
-            color="white"
-            label="Baştan başla"
-            @click="restart"
-          />
-        </div>
-      </section>
-
-      <aside class="campaign-landing__progress" aria-label="Kampanya özeti">
-        <TreasureProgress :completed="completedCount" :total="totalStages" />
-        <div class="campaign-principles">
-          <div><q-icon name="search" /><span>İpucunu oku</span></div>
-          <div><q-icon name="qr_code_scanner" /><span>Kodu simüle et</span></div>
-          <div><q-icon name="travel_explore" /><span>Keşfi aç</span></div>
-        </div>
-      </aside>
+      </footer>
     </main>
-
-    <p class="campaign-landing__note">Gerçek QR taraması veya ödül altyapısı kullanılmaz.</p>
   </q-page>
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import TreasureProgress from '@/components/campaign/TreasureProgress.vue'
-import { useTreasureHunt } from '@/composables/useTreasureHunt.js'
+import { computed, nextTick, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import CampaignContextHero from '@/components/campaign/CampaignContextHero.vue'
+import CampaignConversionPanel from '@/components/campaign/CampaignConversionPanel.vue'
+import CampaignReactionPanel from '@/components/campaign/CampaignReactionPanel.vue'
+import CampaignSocialLayers from '@/components/campaign/CampaignSocialLayers.vue'
+import {
+  CAMPAIGN_ENTRY_MODES,
+  getCampaignContext,
+  resolveCampaignContextId,
+} from '@/data/campaign-contexts.js'
+import { usePrototypeStore } from '@/stores/prototype.js'
 
-const { completedCount, nextStage, resetTreasureHunt, rewardUnlocked, totalStages } =
-  useTreasureHunt()
+const route = useRoute()
+const router = useRouter()
+const store = usePrototypeStore()
+const conversionPanel = ref(null)
 
-const nextRoute = computed(() =>
-  rewardUnlocked.value ? '/campaign/reward' : `/campaign/clue/${nextStage.value}`,
+const contextId = computed(() => resolveCampaignContextId(route.query.context))
+const context = computed(() => getCampaignContext(contextId.value))
+const selectedReaction = computed(() => store.campaign.reactions[contextId.value] ?? null)
+const revealedLayers = computed(() => store.campaign.revealedLayers[contextId.value] ?? [])
+const conversionActive = computed(
+  () =>
+    store.campaign.conversion.contextId === contextId.value &&
+    store.campaign.conversion.status === 'transition',
 )
 
-function restart() {
-  resetTreasureHunt()
+watch(
+  [contextId, () => route.query.mode],
+  ([id, mode]) => {
+    if (mode === CAMPAIGN_ENTRY_MODES.member) {
+      store.seedCampaignMember(id)
+      router.replace({
+        name: 'campaign-context-hub',
+        params: { contextId: id },
+        query: {
+          source: 'qr',
+          ...(route.query.demo ? { demo: route.query.demo, demoStep: route.query.demoStep } : {}),
+        },
+      })
+      return
+    }
+
+    store.setCampaignEntry(id, CAMPAIGN_ENTRY_MODES.visitor)
+  },
+  { immediate: true },
+)
+
+function hasLayer(layerId) {
+  return revealedLayers.value.includes(layerId)
+}
+
+function selectReaction(optionId) {
+  store.selectCampaignReaction(contextId.value, optionId)
+}
+
+function revealLayer(layerId) {
+  store.revealCampaignLayer(contextId.value, layerId)
+}
+
+async function beginConversion() {
+  store.beginCampaignConversion(contextId.value)
+  await nextTick()
+  conversionPanel.value?.$el?.scrollIntoView?.({ behavior: 'smooth', block: 'center' })
+}
+
+function continueInNSosyal() {
+  store.completeCampaignConversion(contextId.value)
+  router.push({
+    name: 'campaign-context-hub',
+    params: { contextId: contextId.value },
+    query: {
+      source: 'campaign',
+      continued: '1',
+      ...(route.query.demo ? { demo: route.query.demo, demoStep: route.query.demoStep } : {}),
+    },
+  })
 }
 </script>
 
 <style scoped>
-.campaign-landing {
-  display: flex;
-  min-height: calc(100dvh - 60px);
-  flex-direction: column;
-  padding: clamp(32px, 7vw, 80px) var(--space-5) max(var(--space-5), env(safe-area-inset-bottom));
+.campaign-entry-page {
+  min-height: calc(100dvh - 62px);
+  color: var(--ns-text);
+  background: var(--ns-bg-subtle);
 }
 
-.campaign-landing__content {
+.campaign-entry-shell {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
-  width: min(100%, 980px);
-  align-items: center;
-  gap: clamp(32px, 7vw, 80px);
-  margin: auto;
+  gap: 24px;
+  width: min(100%, 1080px);
+  padding: clamp(20px, 5vw, 52px) 20px max(48px, env(safe-area-inset-bottom));
+  margin: 0 auto;
 }
 
-.campaign-hero__eyebrow {
-  margin: 0 0 var(--space-4);
-  color: #5fd8ef;
-  font-size: 0.75rem;
-  font-weight: 750;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.campaign-hero h1 {
-  max-width: 650px;
-  margin: 0;
-  color: #f5f8fb;
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  line-height: 1.04;
-  letter-spacing: -0.045em;
-}
-
-.campaign-hero__lead {
-  max-width: 590px;
-  margin: var(--space-5) 0 0;
-  color: #aeb9c7;
-  font-size: 1rem;
-  line-height: 1.65;
-}
-
-.campaign-hero__actions {
+.campaign-entry-note,
+.campaign-entry-footer {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  margin-top: var(--space-6);
 }
 
-.campaign-hero__actions .q-btn {
-  min-height: var(--touch-target);
-}
-
-.campaign-hero__primary {
-  min-height: 50px;
-  padding-inline: var(--space-5);
+.campaign-entry-note {
+  gap: 12px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 11px 14px;
+  color: var(--ns-text-secondary);
+  background: var(--ns-surface);
+  border: 1px solid var(--ns-border);
   border-radius: var(--radius-md);
-  font-weight: 650;
 }
 
-.campaign-landing__progress {
+.campaign-entry-note > .q-icon {
+  flex: 0 0 auto;
+  color: var(--ns-brand);
+  font-size: 23px;
+}
+
+.campaign-entry-note > div {
   display: grid;
-  gap: var(--space-6);
-  padding: var(--space-6);
-  background: rgba(22, 33, 48, 0.86);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: var(--radius-xl);
+  gap: 2px;
 }
 
-.campaign-principles {
-  display: grid;
-  gap: var(--space-3);
-  padding-top: var(--space-5);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+.campaign-entry-note strong {
+  color: var(--ns-text);
+  font-size: 12px;
 }
 
-.campaign-principles div {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  color: #c3ccd7;
-  font-size: 0.875rem;
+.campaign-entry-note span {
+  font-size: 10px;
 }
 
-.campaign-principles .q-icon {
-  color: #64d8ee;
-  font-size: 1.25rem;
+.campaign-entry-footer {
+  gap: 10px;
+  justify-content: center;
+  padding-top: 8px;
+  color: var(--ns-text-tertiary);
 }
 
-.campaign-landing__note {
-  margin: var(--space-6) auto 0;
-  color: #7f8c9c;
-  font-size: 0.75rem;
-  text-align: center;
+.campaign-entry-footer img {
+  flex: 0 0 auto;
+  object-fit: contain;
 }
 
-@media (max-width: 767px) {
-  .campaign-landing__content {
-    grid-template-columns: minmax(0, 1fr);
+.campaign-entry-footer p {
+  max-width: 620px;
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.campaign-conversion-enter-active,
+.campaign-conversion-leave-active {
+  transition:
+    opacity var(--motion-base) var(--ease-standard),
+    transform var(--motion-base) var(--ease-standard);
+}
+
+.campaign-conversion-enter-from,
+.campaign-conversion-leave-to {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+@media (max-width: 599px) {
+  .campaign-entry-shell {
+    gap: 18px;
+    padding: 16px 12px max(36px, env(safe-area-inset-bottom));
   }
 
-  .campaign-hero h1 {
-    font-size: clamp(2rem, 10vw, 2.75rem);
-  }
-
-  .campaign-landing__progress {
-    padding: var(--space-5);
-  }
-}
-
-@media (max-width: 380px) {
-  .campaign-landing {
-    padding-inline: var(--space-4);
-  }
-
-  .campaign-hero__actions,
-  .campaign-hero__primary {
+  .campaign-entry-note {
     width: 100%;
   }
 }

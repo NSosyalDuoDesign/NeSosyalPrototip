@@ -59,7 +59,7 @@ const search = ref('')
 const trends = [
   { label: 'TeknofestMaviVatan', count: '982 gönderi', to: '/discover?tab=daily' },
   { label: 'SAKARYA', count: '243 gönderi', to: '/discover?tab=daily' },
-  { label: 'TEKNOFEST', count: '642 gönderi', to: '/campaign' },
+  { label: 'TEKNOFEST', count: '642 gönderi', to: '/context/launch' },
   { label: 'MustafaKemalAtatürk', count: '212 gönderi', to: '/discover?tab=weekly' },
   { label: 'türkiye', count: '1,9B gönderi', to: '/discover?tab=weekly' },
 ]

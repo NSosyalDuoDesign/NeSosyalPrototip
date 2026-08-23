@@ -4,9 +4,9 @@
       <q-btn flat round dense icon="menu" aria-label="Menüyü aç" class="top-app-bar__action">
         <q-menu class="mobile-more-menu">
           <q-list style="min-width: 230px">
-            <q-item v-close-popup clickable to="/campaign">
-              <q-item-section avatar><q-icon name="stadia_controller" /></q-item-section>
-              <q-item-section>Nod Oyna</q-item-section>
+            <q-item v-close-popup clickable to="/context/series">
+              <q-item-section avatar><q-icon name="forum" /></q-item-section>
+              <q-item-section>Canlı Gündem</q-item-section>
             </q-item>
             <q-item v-close-popup clickable to="/onboarding">
               <q-item-section avatar><q-icon name="tune" /></q-item-section>
