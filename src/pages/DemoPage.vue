@@ -4,7 +4,16 @@
       <div class="demo-header__brand">
         <div><strong>NSosyal</strong><span>NSosyal · Sunum modu</span></div>
       </div>
-      <q-btn flat no-caps icon="close" label="Demo modundan çık" to="/" />
+      <div class="demo-header__actions">
+        <q-btn
+          flat
+          no-caps
+          icon="assignment"
+          label="Kullanılabilirlik testi"
+          to="/usability-test"
+        />
+        <q-btn flat no-caps icon="close" label="Demo modundan çık" to="/" />
+      </div>
     </header>
 
     <main class="demo-shell">
@@ -151,6 +160,7 @@ function openCampaignContext(contextId, mode) {
 
 .demo-header,
 .demo-header__brand,
+.demo-header__actions,
 .demo-progress,
 .demo-dependency-note,
 .demo-step__title {
@@ -168,6 +178,10 @@ function openCampaignContext(contextId, mode) {
 
 .demo-header__brand {
   gap: 10px;
+}
+
+.demo-header__actions {
+  gap: 4px;
 }
 
 .demo-header__brand > div {
@@ -469,7 +483,7 @@ function openCampaignContext(contextId, mode) {
 }
 
 @media (max-width: 599px) {
-  .demo-header .q-btn :deep(.q-btn__content span) {
+  .demo-header__actions .q-btn :deep(.q-btn__content span) {
     display: none;
   }
 
