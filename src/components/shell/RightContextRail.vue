@@ -98,7 +98,25 @@ const trends = [
 }
 
 .context-search :deep(.q-field__native) {
+  min-height: 50px;
+  padding-block: 0;
+  color: var(--ns-text);
   font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.context-search :deep(.q-field__native::placeholder) {
+  color: var(--ns-text-secondary);
+  opacity: 1;
+}
+
+.context-search :deep(.q-field__prepend) {
+  padding-right: 10px;
+}
+
+.context-search :deep(.q-field__marginal) {
+  height: 50px;
 }
 
 .context-search :deep(.q-field__control::before) {
