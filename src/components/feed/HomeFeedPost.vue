@@ -16,6 +16,7 @@
         <span>{{ post.author.handle }} · {{ timeLabel }}</span>
       </div>
       <q-btn
+        ref="optionsButton"
         flat
         round
         dense
@@ -59,6 +60,7 @@
       :src="post.media.src"
       :alt="post.media.alt"
       :style="{ aspectRatio: post.media.aspectRatio }"
+      loading="lazy"
     />
 
     <div v-if="post.poll" class="feed-post__poll" aria-label="Anket önizlemesi">
@@ -109,7 +111,7 @@
     </footer>
     <span class="sr-only" aria-live="polite">{{ interactionAnnouncement }}</span>
 
-    <q-dialog v-model="explanationOpen">
+    <q-dialog v-model="explanationOpen" @hide="restoreOptionsFocus">
       <q-card class="recommendation-dialog">
         <q-card-section class="recommendation-dialog__heading">
           <div>
@@ -149,17 +151,19 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import UserAvatar from '@/components/ui/UserAvatar.vue'
 
 const props = defineProps({
   post: { type: Object, required: true },
   topics: { type: Array, required: true },
+  selectedInterestIds: { type: Array, default: () => [] },
   feedbackState: { type: String, default: 'neutral' },
 })
 
 const emit = defineEmits(['feedback'])
 const explanationOpen = ref(false)
+const optionsButton = ref(null)
 const liked = ref(false)
 const saved = ref(false)
 
@@ -181,14 +185,26 @@ const visibleTopics = computed(() =>
   props.topics.filter((topic) => props.post.topicIds.includes(topic.id)).slice(0, 3),
 )
 const reasonText = computed(() => {
-  const topic = visibleTopics.value[0]
-  return topic ? `${topic.label} ilgi alanına göre` : 'Topluluklarda konuşuluyor'
+  if (props.post.isLocalDemo) return 'Yeni paylaştığın gönderi'
+  if (props.feedbackState === 'interested') return 'Verdiğin olumlu geri bildirime göre'
+
+  const matchedTopic = visibleTopics.value.find((topic) =>
+    props.selectedInterestIds.includes(topic.id),
+  )
+  if (matchedTopic) return `${matchedTopic.label} ilgi alanına göre`
+  if (props.post.discoveryMetadata.daily) return 'Bugünün seçkisinde yükseliyor'
+  if (props.post.discoveryMetadata.weekly) return 'Bu haftanın seçkisinde öne çıkıyor'
+  return 'Topluluklarda konuşuluyor'
 })
 const timeLabel = computed(() => {
   if (props.post.discoveryMetadata.daily) return 'Bugün'
   if (props.post.discoveryMetadata.weekly) return 'Bu hafta'
   return 'Yakın zamanda'
 })
+
+function restoreOptionsFocus() {
+  nextTick(() => optionsButton.value?.$el?.focus())
+}
 </script>
 
 <style scoped>
@@ -466,6 +482,16 @@ const timeLabel = computed(() => {
   }
 
   .feed-post__feedback .q-btn {
+    min-height: 44px;
+  }
+
+  .feed-post__header > .q-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .feed-post__actions button,
+  .feed-post__poll button {
     min-height: 44px;
   }
 }

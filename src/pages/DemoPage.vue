@@ -16,22 +16,26 @@
           yenileme sonrasında da URL üzerinden bulunduğun adımı korur.
         </p>
         <div class="demo-progress" role="status">
-          <span>{{ readyCount }} adım çalışır durumda</span>
-          <span>{{ integrationCount }} adım A entegrasyonu bekliyor</span>
+          <span
+            ><q-icon name="check_circle" aria-hidden="true" /> {{ readyCount }} adımın tamamı
+            çalışır durumda</span
+          >
         </div>
         <p v-if="route.query.reset === 'done'" class="demo-reset-success" aria-live="polite">
           <q-icon name="check_circle" aria-hidden="true" /> Prototip başlangıç durumuna döndü.
         </p>
       </section>
 
-      <section class="demo-dependency-note" aria-labelledby="dependency-title">
-        <q-icon name="info" size="22px" aria-hidden="true" />
+      <section
+        class="demo-dependency-note demo-dependency-note--ready"
+        aria-labelledby="dependency-title"
+      >
+        <q-icon name="task_alt" size="22px" aria-hidden="true" />
         <div>
-          <h2 id="dependency-title">Bağımlılık durumu</h2>
+          <h2 id="dependency-title">Uçtan uca demo hazır</h2>
           <p>
-            Eksik A ekranları uydurma bir arayüzle kapatılmadı. Onboarding, Keşif, Yapıcı Paylaşım,
-            Geri Dönüş ve Sıfırlama doğrudan oynatılabilir; diğer adımlar için veri yardımcıları
-            hazır.
+            Kampanyadan kişisel akışa, keşiften yapıcı paylaşıma ve geri dönüş özetine kadar tüm
+            adımlar aynı yerel state üzerinde oynatılabilir.
           </p>
         </div>
       </section>
@@ -46,19 +50,16 @@
           <div class="demo-step__content">
             <div class="demo-step__title">
               <h2>{{ step.title }}</h2>
-              <span :class="`demo-status demo-status--${step.status}`">
-                {{ step.status === 'ready' ? 'Hazır' : 'A entegrasyonu' }}
-              </span>
+              <span class="demo-status demo-status--ready">Hazır</span>
             </div>
             <p>{{ step.description }}</p>
-            <small v-if="step.dependency">Beklenen: {{ step.dependency }}</small>
           </div>
           <q-btn
             flat
             no-caps
             color="primary"
-            :label="step.status === 'ready' ? 'Adımı aç' : 'Detayı göster'"
-            :icon-right="step.status === 'ready' ? 'arrow_forward' : 'info'"
+            label="Adımı aç"
+            icon-right="arrow_forward"
             @click="openStep(step)"
           />
         </li>
@@ -78,7 +79,6 @@ const router = useRouter()
 const store = usePrototypeStore()
 
 const readyCount = demoScenario.filter((step) => step.status === 'ready').length
-const integrationCount = demoScenario.length - readyCount
 const selectedStep = computed(() => demoStepById(route.query.demoStep))
 
 function openStep(step) {
@@ -203,6 +203,12 @@ function openStep(step) {
   border-radius: var(--radius-md, 12px);
 }
 
+.demo-dependency-note--ready {
+  color: #126842;
+  background: #effaf4;
+  border-color: #b9e3cc;
+}
+
 .demo-dependency-note h2 {
   font-size: 15px;
 }
@@ -278,11 +284,6 @@ function openStep(step) {
   background: #eaf8f1;
 }
 
-.demo-status--integration {
-  color: #805814;
-  background: #fff4d9;
-}
-
 .demo-step__content p,
 .demo-step__content small {
   color: var(--ns-text-secondary, #5f6670);
@@ -295,7 +296,7 @@ function openStep(step) {
 }
 
 .demo-steps .q-btn {
-  min-height: 40px;
+  min-height: var(--touch-target);
 }
 
 @media (min-width: 600px) {

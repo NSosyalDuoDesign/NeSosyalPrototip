@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { currentDemoUser } from '@/data/mock-users.js'
 import { interestTaxonomy, interestIds } from '@/data/mock-interests.js'
-import { mockPosts, postIds } from '@/data/mock-posts.js'
+import { mockPosts } from '@/data/mock-posts.js'
 import { discoveryCollections, risingTopics } from '@/data/mock-discovery.js'
 import {
   clearPrototypePreferences,
@@ -42,6 +42,7 @@ const initialState = () => ({
     completedStages: [],
     simulatedScans: [],
     rewardUnlocked: false,
+    rewardClaimed: false,
   },
   composer: {
     draftText: '',
@@ -129,7 +130,11 @@ export const usePrototypeStore = defineStore('prototype', {
     },
 
     setPostFeedback(postId, feedback) {
-      if (!postIds.includes(postId) || !Object.values(FEEDBACK_STATES).includes(feedback)) return
+      if (
+        !this.posts.some((post) => post.id === postId) ||
+        !Object.values(FEEDBACK_STATES).includes(feedback)
+      )
+        return
       if (feedback === FEEDBACK_STATES.neutral) delete this.postFeedback[postId]
       else this.postFeedback[postId] = feedback
 
@@ -155,24 +160,31 @@ export const usePrototypeStore = defineStore('prototype', {
     advanceTreasureHunt(stageId, simulatedCode) {
       if (!stageId || this.treasureHunt.completedStages.includes(stageId)) return
       this.treasureHunt.completedStages.push(stageId)
+      this.treasureHunt.completedStages.sort((left, right) => left - right)
       if (simulatedCode) this.treasureHunt.simulatedScans.push(simulatedCode)
-      this.treasureHunt.currentStage += 1
+      this.treasureHunt.currentStage = this.treasureHunt.completedStages.length
       this.treasureHunt.rewardUnlocked = this.treasureHunt.completedStages.length >= 3
+    },
+
+    claimTreasureReward() {
+      if (this.treasureHunt.rewardUnlocked) this.treasureHunt.rewardClaimed = true
     },
 
     seedTreasureHunt(completed = false) {
       this.treasureHunt = completed
         ? {
             currentStage: 3,
-            completedStages: ['demo-stage-1', 'demo-stage-2', 'demo-stage-3'],
+            completedStages: [1, 2, 3],
             simulatedScans: ['NS-01', 'NS-02', 'NS-03'],
             rewardUnlocked: true,
+            rewardClaimed: false,
           }
         : {
             currentStage: 0,
             completedStages: [],
             simulatedScans: [],
             rewardUnlocked: false,
+            rewardClaimed: false,
           }
     },
 
@@ -226,6 +238,7 @@ export const usePrototypeStore = defineStore('prototype', {
         overlooked: false,
         feedbackState: FEEDBACK_STATES.neutral,
         trendScore: 0,
+        isLocalDemo: true,
       }
 
       this.posts = [post, ...this.posts.filter((item) => item.id !== post.id)]
@@ -274,6 +287,7 @@ export const usePrototypeStore = defineStore('prototype', {
       this.user.experiencePreset = preferences.user.experiencePreset
       this.postFeedback = preferences.postFeedback
       this.topicFeedback = preferences.topicFeedback
+      this.treasureHunt = preferences.treasureHunt
       return true
     },
 
@@ -287,6 +301,7 @@ export const usePrototypeStore = defineStore('prototype', {
           },
           postFeedback: this.postFeedback,
           topicFeedback: this.topicFeedback,
+          treasureHunt: this.treasureHunt,
         },
         storage,
       )

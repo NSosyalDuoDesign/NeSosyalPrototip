@@ -6,16 +6,16 @@ export const demoScenario = Object.freeze([
     title: 'Kampanya',
     shortTitle: 'QR kampanyası',
     description: 'QR ile başlayan dijital hazine avını aç.',
-    status: 'integration',
-    dependency: '03 — QR Campaign & Digital Treasure Hunt',
+    status: 'ready',
+    location: { name: 'campaign' },
   },
   {
     id: 2,
     title: 'Ödül ve giriş',
     shortTitle: 'Ödül / giriş',
     description: 'Simüle edilen avı bitirip NSosyal’e geç.',
-    status: 'integration',
-    dependency: '03 — QR Campaign & Digital Treasure Hunt',
+    status: 'ready',
+    location: { name: 'campaign-reward' },
   },
   {
     id: 3,
@@ -30,16 +30,16 @@ export const demoScenario = Object.freeze([
     title: 'Kişiselleştirilmiş ana sayfa',
     shortTitle: 'Kişisel akış',
     description: 'Seçilen konuların ana akış sırasını değiştirdiğini göster.',
-    status: 'integration',
-    dependency: '05 — Personalized Home Feed',
+    status: 'ready',
+    location: { name: 'home' },
   },
   {
     id: 5,
     title: 'Açık öneri kontrolü',
     shortTitle: 'Akış kontrolü',
     description: 'Bir gönderiyi ilgili, diğerini ilgisiz işaretleyip sonucu göster.',
-    status: 'integration',
-    dependency: '05 — Personalized Home Feed',
+    status: 'ready',
+    location: { name: 'home' },
   },
   {
     id: 6,
@@ -54,8 +54,8 @@ export const demoScenario = Object.freeze([
     title: 'Deneyim tercihi',
     shortTitle: 'Rahat görünüm',
     description: 'Dengeli görünümden Rahat görünüme geçişi göster.',
-    status: 'integration',
-    dependency: '07 — Adaptive Experience Presets',
+    status: 'ready',
+    location: { name: 'settings', query: { presetPreview: 'comfortable' } },
   },
   {
     id: 8,
@@ -96,7 +96,7 @@ export function prepareDemoStep(store, stepId) {
   if (id === 4) store.seedOnboarding(true)
   if (id === 5) store.seedSpecificFeedback()
   if (id === 6) store.seedOnboarding(true)
-  if (id === 7) store.setExperiencePreset('comfortable')
+  if (id === 7) store.setExperiencePreset('balanced')
   if (id === 8) store.seedComposerText(DEMO_HARSH_DRAFT)
   if (id === 9) store.seedReturningUser()
 }

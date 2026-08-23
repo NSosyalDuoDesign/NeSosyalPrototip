@@ -48,6 +48,15 @@
           </div>
         </div>
 
+        <div v-if="publishError" class="composer-error" role="alert">
+          <q-icon name="error_outline" aria-hidden="true" />
+          <div>
+            <strong>Gönderi paylaşılamadı</strong>
+            <span>Taslağın korundu. Bağlantını kontrol edip yeniden deneyebilirsin.</span>
+          </div>
+          <q-btn flat no-caps color="primary" label="Tekrar dene" @click="retryPublish" />
+        </div>
+
         <div v-if="store.composer.attachment" class="attachment-preview">
           <div class="attachment-preview__visual" aria-hidden="true">
             <q-icon :name="store.composer.attachment.icon" size="30px" />
@@ -92,7 +101,8 @@
               no-caps
               color="primary"
               label="Paylaş"
-              :disable="!canPublish"
+              :disable="!canPublish || isPublishingPreview"
+              :loading="isPublishingPreview"
               @click="attemptPublish"
             />
           </div>
@@ -109,16 +119,19 @@
 
 <script setup>
 import { computed, nextTick, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import ConstructiveIntervention from '@/components/composer/ConstructiveIntervention.vue'
 import UserAvatar from '@/components/ui/UserAvatar.vue'
 import { analyzeLanguage, DEMO_HARSH_DRAFT } from '@/services/language-intervention.js'
 import { usePrototypeStore } from '@/stores/prototype.js'
 
 const route = useRoute()
+const router = useRouter()
 const store = usePrototypeStore()
 const draftInput = ref(null)
 const published = ref(false)
+const publishError = ref('')
+const isPublishingPreview = computed(() => route.query.state === 'loading')
 
 const draft = computed({
   get: () => store.composer.draftText,
@@ -142,6 +155,13 @@ onMounted(() => {
 
 function attemptPublish() {
   if (!canPublish.value) return
+  publishError.value = ''
+
+  if (route.query.state === 'error') {
+    publishError.value = 'preview-error'
+    return
+  }
+
   const result = analyzeLanguage(store.composer.draftText)
 
   if (result.severity !== 'neutral' && !store.composer.interventionDismissed) {
@@ -155,6 +175,14 @@ function attemptPublish() {
 function publishDraft() {
   store.publishComposerDraft()
   published.value = true
+}
+
+async function retryPublish() {
+  publishError.value = ''
+  const query = { ...route.query }
+  delete query.state
+  await router.replace({ query })
+  attemptPublish()
 }
 
 async function editDraft() {
@@ -331,6 +359,38 @@ function startNewPost() {
   border-radius: var(--radius-md, 12px);
 }
 
+.composer-error {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  color: var(--ns-danger);
+  background: color-mix(in srgb, var(--ns-danger) 7%, var(--ns-surface));
+  border: 1px solid color-mix(in srgb, var(--ns-danger) 30%, var(--ns-border));
+  border-radius: var(--radius-md);
+}
+
+.composer-error > div {
+  display: grid;
+  gap: 2px;
+}
+
+.composer-error strong {
+  color: var(--ns-text);
+  font-size: 13px;
+}
+
+.composer-error span {
+  color: var(--ns-text-secondary);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.composer-error .q-btn {
+  min-height: 40px;
+}
+
 .attachment-preview__visual {
   display: grid;
   place-items: center;
@@ -482,6 +542,15 @@ function startNewPost() {
 
   .composer-toolbar__publish {
     justify-content: flex-end;
+  }
+
+  .composer-error {
+    grid-template-columns: 28px minmax(0, 1fr);
+  }
+
+  .composer-error .q-btn {
+    grid-column: 2;
+    justify-self: start;
   }
 }
 </style>

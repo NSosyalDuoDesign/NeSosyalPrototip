@@ -60,6 +60,9 @@
 }
 
 .top-app-bar__brand {
+  display: flex;
+  min-height: var(--touch-target);
+  align-items: center;
   margin: 0 auto;
   color: var(--ns-text);
   font-size: 1.0625rem;

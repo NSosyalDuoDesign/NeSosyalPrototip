@@ -73,6 +73,40 @@
         </div>
       </section>
 
+      <section
+        v-else-if="previewState === 'loading'"
+        class="onboarding-content preview-state"
+        aria-label="Akış önizlemesi yükleniyor"
+      >
+        <q-skeleton type="text" width="36%" />
+        <q-skeleton type="text" width="72%" />
+        <div v-for="item in 3" :key="item" class="preview-state__row">
+          <q-skeleton type="QAvatar" />
+          <div><q-skeleton type="text" width="42%" /><q-skeleton type="text" /></div>
+        </div>
+      </section>
+
+      <section
+        v-else-if="previewState === 'error'"
+        class="onboarding-content preview-state preview-state--message"
+        role="alert"
+      >
+        <q-icon name="wifi_off" size="34px" aria-hidden="true" />
+        <h2>Akış önizlemesi hazırlanamadı</h2>
+        <p>Seçimlerin korundu. Önizlemeyi yeniden oluşturabilirsin.</p>
+        <q-btn outline no-caps color="primary" label="Tekrar dene" @click="clearPreviewState" />
+      </section>
+
+      <section
+        v-else-if="previewState === 'empty'"
+        class="onboarding-content preview-state preview-state--message"
+      >
+        <q-icon name="tune" size="34px" aria-hidden="true" />
+        <h2>Önizleme için konu seçimi gerekiyor</h2>
+        <p>Konularını yeniden düzenleyip kişisel akış örneklerini görebilirsin.</p>
+        <q-btn flat no-caps color="primary" label="Seçimlerime dön" @click="step = 2" />
+      </section>
+
       <PersonalizationPreview
         v-else
         class="onboarding-content"
@@ -98,7 +132,10 @@
           color="primary"
           :label="step === 3 ? 'Akışıma geç' : 'Devam et'"
           :icon-right="step === 3 ? 'check' : 'arrow_forward'"
-          :disable="step === 2 && selectedCount < minimumSelection"
+          :disable="
+            (step === 2 && selectedCount < minimumSelection) ||
+            (step === 3 && previewState === 'loading')
+          "
           class="onboarding-actions__primary"
           @click="advance"
         />
@@ -109,15 +146,18 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import InterestOption from '@/components/onboarding/InterestOption.vue'
 import PersonalizationPreview from '@/components/onboarding/PersonalizationPreview.vue'
 import { usePrototypeStore } from '@/stores/prototype.js'
 
 const minimumSelection = 3
-const step = ref(1)
+const route = useRoute()
 const router = useRouter()
+const requestedStep = Number(route.query.step)
+const step = ref([1, 2, 3].includes(requestedStep) ? requestedStep : 1)
 const store = usePrototypeStore()
+const previewState = computed(() => String(route.query.state ?? ''))
 
 const steps = [
   { id: 1, label: 'Tanış' },
@@ -152,6 +192,12 @@ function advance() {
 
   store.completeOnboarding()
   router.push({ name: 'home' })
+}
+
+function clearPreviewState() {
+  const query = { ...route.query }
+  delete query.state
+  router.replace({ query })
 }
 </script>
 
@@ -273,6 +319,54 @@ function advance() {
 
 .onboarding-content {
   min-height: 452px;
+}
+
+.preview-state {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.preview-state__row {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--ns-border);
+}
+
+.preview-state__row > div {
+  display: grid;
+  gap: 6px;
+}
+
+.preview-state--message {
+  align-content: center;
+  justify-items: center;
+  padding: 32px;
+  text-align: center;
+}
+
+.preview-state--message .q-icon {
+  color: var(--ns-brand);
+}
+
+.preview-state--message h2,
+.preview-state--message p {
+  margin: 0;
+}
+
+.preview-state--message h2 {
+  font-size: 18px;
+}
+
+.preview-state--message p {
+  color: var(--ns-text-secondary);
+  font-size: 13px;
+}
+
+.preview-state--message .q-btn {
+  min-height: 44px;
 }
 
 .onboarding-welcome {

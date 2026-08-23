@@ -16,6 +16,7 @@ export function scorePost(post, state) {
   }, 0)
 
   return (
+    (post.isLocalDemo ? 12 : 0) +
     selectedMatches * 3 +
     (postFeedback === 'interested' ? 4 : 0) +
     (postFeedback === 'notInterested' ? -6 : 0) +

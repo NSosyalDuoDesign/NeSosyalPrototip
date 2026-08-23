@@ -67,6 +67,9 @@ function restart() {
 }
 
 .campaign-header__brand {
+  display: flex;
+  min-height: var(--touch-target);
+  align-items: center;
   margin: 0 auto;
   color: #f4f7fb;
   font-weight: 750;

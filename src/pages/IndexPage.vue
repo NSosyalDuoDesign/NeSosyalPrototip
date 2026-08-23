@@ -106,6 +106,7 @@
               :key="post.id"
               :post="post"
               :topics="store.interests"
+              :selected-interest-ids="store.user.selectedInterests"
               :feedback-state="post.feedbackState"
               @feedback="(feedback) => applyFeedback(post, feedback)"
             />
@@ -323,6 +324,7 @@ const discoveryLinks = [
   font-size: 12px;
   font-weight: 650;
   text-decoration: none;
+  min-height: var(--touch-target);
 }
 
 .discovery-strip__links {

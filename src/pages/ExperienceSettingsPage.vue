@@ -84,11 +84,16 @@
 
 <script setup>
 import { computed, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import ExperiencePreview from '@/components/settings/ExperiencePreview.vue'
 import { usePrototypeStore } from '@/stores/prototype.js'
 
 const store = usePrototypeStore()
-const draftPreset = ref(store.user.experiencePreset)
+const route = useRoute()
+const previewPreset = ['fluid', 'balanced', 'comfortable'].includes(route.query.presetPreview)
+  ? route.query.presetPreview
+  : store.user.experiencePreset
+const draftPreset = ref(previewPreset)
 
 const presetOptions = Object.freeze([
   {

@@ -1,6 +1,5 @@
-import { computed, ref } from 'vue'
-
-const STORAGE_KEY = 'ne-sosyal-treasure-hunt'
+import { computed } from 'vue'
+import { usePrototypeStore } from '@/stores/prototype.js'
 
 export const treasureClues = [
   {
@@ -26,67 +25,27 @@ export const treasureClues = [
   },
 ]
 
-function readState() {
-  if (typeof localStorage === 'undefined') {
-    return { completedStages: [], rewardClaimed: false }
-  }
-
-  try {
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}')
-    const completedStages = Array.isArray(stored.completedStages)
-      ? stored.completedStages.filter((stage) => treasureClues.some((clue) => clue.id === stage))
-      : []
-
-    return {
-      completedStages,
-      rewardClaimed: stored.rewardClaimed === true,
-    }
-  } catch {
-    return { completedStages: [], rewardClaimed: false }
-  }
-}
-
-const initialState = readState()
-const completedStages = ref(initialState.completedStages)
-const rewardClaimed = ref(initialState.rewardClaimed)
-
-function persistState() {
-  if (typeof localStorage === 'undefined') return
-
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify({
-      completedStages: completedStages.value,
-      rewardClaimed: rewardClaimed.value,
-    }),
-  )
-}
-
 export function useTreasureHunt() {
+  const store = usePrototypeStore()
   const totalStages = treasureClues.length
+  const completedStages = computed(() => store.treasureHunt.completedStages)
   const completedCount = computed(() => completedStages.value.length)
   const progress = computed(() => completedCount.value / totalStages)
-  const rewardUnlocked = computed(() => completedCount.value === totalStages)
+  const rewardUnlocked = computed(() => store.treasureHunt.rewardUnlocked)
+  const rewardClaimed = computed(() => store.treasureHunt.rewardClaimed)
   const nextStage = computed(() => Math.min(completedCount.value + 1, totalStages))
 
   function completeStage(stage) {
     if (!treasureClues.some((clue) => clue.id === stage)) return
-    if (!completedStages.value.includes(stage)) {
-      completedStages.value = [...completedStages.value, stage].sort((a, b) => a - b)
-      persistState()
-    }
+    store.advanceTreasureHunt(stage, `NS-${String(stage).padStart(2, '0')}`)
   }
 
   function claimReward() {
-    if (!rewardUnlocked.value) return
-    rewardClaimed.value = true
-    persistState()
+    store.claimTreasureReward()
   }
 
   function resetTreasureHunt() {
-    completedStages.value = []
-    rewardClaimed.value = false
-    persistState()
+    store.seedTreasureHunt(false)
   }
 
   return {
