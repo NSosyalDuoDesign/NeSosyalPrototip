@@ -52,6 +52,26 @@
             <q-item-section avatar><q-icon name="smart_display" /></q-item-section>
             <q-item-section>Demo Senaryosu</q-item-section>
           </q-item>
+          <q-expansion-item icon="group_add" label="Takip önerileri">
+            <q-item v-for="person in suggestions" :key="person.handle" class="profile-suggestion">
+              <q-item-section>
+                <q-item-label>{{ person.name }}</q-item-label>
+                <q-item-label caption>{{ person.handle }}</q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                <q-btn
+                  dense
+                  flat
+                  no-caps
+                  color="primary"
+                  :icon="isFollowing(person.handle) ? 'check' : 'person_add'"
+                  :label="isFollowing(person.handle) ? 'Takipte' : 'Takip et'"
+                  :aria-pressed="isFollowing(person.handle)"
+                  @click.stop="toggleFollow(person.handle)"
+                />
+              </q-item-section>
+            </q-item>
+          </q-expansion-item>
         </q-list>
       </q-card>
     </q-menu>
@@ -59,6 +79,7 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import UserAvatar from '@/components/ui/UserAvatar.vue'
 import { useTheme } from '@/composables/useTheme.js'
 import { usePrototypeStore } from '@/stores/prototype.js'
@@ -69,6 +90,22 @@ defineProps({
 
 const store = usePrototypeStore()
 const { isDark, setDarkMode } = useTheme()
+const followedHandles = ref([])
+
+const suggestions = [
+  { name: 'Açık Bilim', handle: '@acikbilim' },
+  { name: 'Oyun Atölyesi', handle: '@oyunatolyesi' },
+]
+
+function isFollowing(handle) {
+  return followedHandles.value.includes(handle)
+}
+
+function toggleFollow(handle) {
+  followedHandles.value = isFollowing(handle)
+    ? followedHandles.value.filter((item) => item !== handle)
+    : [...followedHandles.value, handle]
+}
 </script>
 
 <style scoped>
@@ -82,5 +119,9 @@ const { isDark, setDarkMode } = useTheme()
 
 .profile-trigger :deep(.q-btn__content) {
   gap: 5px;
+}
+
+.profile-suggestion .q-btn {
+  min-height: 36px;
 }
 </style>

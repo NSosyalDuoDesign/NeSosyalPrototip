@@ -1,19 +1,7 @@
 <template>
-  <section v-if="feedbackState === 'notInterested'" class="feed-post feed-post--removed">
-    <q-icon name="visibility_off" size="22px" aria-hidden="true" />
-    <div>
-      <strong>Bu gönderiyi akışından çıkardık.</strong>
-      <span>Benzer içerikleri daha az göstereceğiz.</span>
-    </div>
-    <q-btn flat no-caps color="primary" label="Geri al" @click="emit('feedback', 'neutral')" />
-  </section>
-
-  <article v-else class="feed-post">
+  <article class="feed-post">
     <header class="feed-post__header">
-      <q-avatar size="42px" color="blue-1" text-color="primary">
-        <img v-if="post.author.avatar" :src="post.author.avatar" alt="" />
-        <span v-else>{{ initials }}</span>
-      </q-avatar>
+      <UserAvatar :name="post.author.displayName" :tone="avatarTone" size="42px" />
       <div class="feed-post__author">
         <div>
           <strong>{{ post.author.displayName }}</strong>
@@ -28,12 +16,36 @@
         <span>{{ post.author.handle }} · {{ timeLabel }}</span>
       </div>
       <q-btn
+        ref="optionsButton"
         flat
         round
         dense
         icon="more_horiz"
         :aria-label="`${post.author.displayName} gönderi seçenekleri`"
-      />
+      >
+        <q-menu anchor="bottom right" self="top right">
+          <q-list class="feed-post__menu" aria-label="Öneri seçenekleri">
+            <q-item v-close-popup clickable @click="explanationOpen = true">
+              <q-item-section avatar><q-icon name="help_outline" /></q-item-section>
+              <q-item-section>Bunu neden görüyorum?</q-item-section>
+            </q-item>
+            <q-item
+              v-close-popup
+              clickable
+              @click="emit('feedback', feedbackState === 'interested' ? 'neutral' : 'interested')"
+            >
+              <q-item-section avatar><q-icon name="thumb_up_off_alt" /></q-item-section>
+              <q-item-section>
+                {{ feedbackState === 'interested' ? 'İlgi işaretini kaldır' : 'İlgileniyorum' }}
+              </q-item-section>
+            </q-item>
+            <q-item v-close-popup clickable @click="emit('feedback', 'notInterested')">
+              <q-item-section avatar><q-icon name="thumb_down_off_alt" /></q-item-section>
+              <q-item-section>İlgilenmiyorum</q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
     </header>
 
     <div class="feed-post__reason">
@@ -48,6 +60,7 @@
       :src="post.media.src"
       :alt="post.media.alt"
       :style="{ aspectRatio: post.media.aspectRatio }"
+      loading="lazy"
     />
 
     <div v-if="post.poll" class="feed-post__poll" aria-label="Anket önizlemesi">
@@ -61,29 +74,12 @@
       <span v-for="topic in visibleTopics" :key="topic.id">{{ topic.label }}</span>
     </div>
 
-    <div class="feed-post__feedback" aria-label="Öneri kontrolü">
-      <span v-if="feedbackState === 'interested'" role="status">
+    <div v-if="feedbackState === 'interested'" class="feed-post__feedback" aria-live="polite">
+      <span role="status">
         <q-icon name="check_circle" aria-hidden="true" /> Bunun gibi içerikleri daha fazla
         göstereceğiz.
       </span>
-      <span v-else>Bu öneri sana uygun mu?</span>
-      <div>
-        <q-btn
-          flat
-          no-caps
-          icon="thumb_up_off_alt"
-          label="İlgileniyorum"
-          :color="feedbackState === 'interested' ? 'primary' : undefined"
-          @click="emit('feedback', feedbackState === 'interested' ? 'neutral' : 'interested')"
-        />
-        <q-btn
-          flat
-          no-caps
-          icon="thumb_down_off_alt"
-          label="İlgilenmiyorum"
-          @click="emit('feedback', 'notInterested')"
-        />
-      </div>
+      <q-btn flat no-caps color="primary" label="Geri al" @click="emit('feedback', 'neutral')" />
     </div>
 
     <footer class="feed-post__actions" aria-label="Gönderi etkileşimleri">
@@ -93,53 +89,130 @@
       <button type="button" :aria-label="`${post.engagement.reposts} yeniden paylaşım`">
         <q-icon name="repeat" /> {{ post.engagement.reposts }}
       </button>
-      <button type="button" :aria-label="`${post.engagement.likes} beğeni`">
-        <q-icon name="favorite_border" /> {{ post.engagement.likes }}
+      <button
+        type="button"
+        :class="{ 'feed-action--active': liked }"
+        :aria-label="liked ? 'Beğeniyi kaldır' : `${post.engagement.likes} beğeni; gönderiyi beğen`"
+        :aria-pressed="liked"
+        @click="liked = !liked"
+      >
+        <q-icon :name="liked ? 'favorite' : 'favorite_border'" />
+        {{ post.engagement.likes + (liked ? 1 : 0) }}
       </button>
-      <button type="button" aria-label="Gönderiyi kaydet">
-        <q-icon name="bookmark_border" />
+      <button
+        type="button"
+        :class="{ 'feed-action--active': saved }"
+        :aria-label="saved ? 'Kayıtlardan çıkar' : 'Gönderiyi kaydet'"
+        :aria-pressed="saved"
+        @click="saved = !saved"
+      >
+        <q-icon :name="saved ? 'bookmark' : 'bookmark_border'" />
       </button>
     </footer>
+    <span class="sr-only" aria-live="polite">{{ interactionAnnouncement }}</span>
+
+    <q-dialog v-model="explanationOpen" @hide="restoreOptionsFocus">
+      <q-card class="recommendation-dialog">
+        <q-card-section class="recommendation-dialog__heading">
+          <div>
+            <span>Akış şeffaflığı</span>
+            <h2>Bunu neden görüyorsun?</h2>
+          </div>
+          <q-btn v-close-popup flat round icon="close" aria-label="Açıklamayı kapat" />
+        </q-card-section>
+        <q-card-section>
+          <p>{{ reasonText }} bu gönderiyi akışında yukarı taşıdı.</p>
+          <p>
+            Seçimlerin ve verdiğin geri bildirimler yalnızca bu cihazdaki prototip sıralamasını
+            değiştirir.
+          </p>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn
+            v-close-popup
+            flat
+            no-caps
+            color="primary"
+            label="İlgilenmiyorum"
+            @click="emit('feedback', 'notInterested')"
+          />
+          <q-btn
+            v-close-popup
+            unelevated
+            no-caps
+            color="primary"
+            label="İlgileniyorum"
+            @click="emit('feedback', 'interested')"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </article>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, nextTick, ref } from 'vue'
+import UserAvatar from '@/components/ui/UserAvatar.vue'
 
 const props = defineProps({
   post: { type: Object, required: true },
   topics: { type: Array, required: true },
+  selectedInterestIds: { type: Array, default: () => [] },
   feedbackState: { type: String, default: 'neutral' },
 })
 
 const emit = defineEmits(['feedback'])
+const explanationOpen = ref(false)
+const optionsButton = ref(null)
+const liked = ref(false)
+const saved = ref(false)
 
-const initials = computed(() =>
-  props.post.author.displayName
-    .split(' ')
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join(''),
-)
+const avatarTone = computed(() => {
+  const tones = ['blue', 'cyan', 'violet']
+  const code = [...props.post.author.id].reduce(
+    (sum, character) => sum + character.charCodeAt(0),
+    0,
+  )
+  return tones[code % tones.length]
+})
+const interactionAnnouncement = computed(() => {
+  if (liked.value && saved.value) return 'Gönderi beğenildi ve kaydedildi.'
+  if (liked.value) return 'Gönderi beğenildi.'
+  if (saved.value) return 'Gönderi kaydedildi.'
+  return ''
+})
 const visibleTopics = computed(() =>
   props.topics.filter((topic) => props.post.topicIds.includes(topic.id)).slice(0, 3),
 )
 const reasonText = computed(() => {
-  const topic = visibleTopics.value[0]
-  return topic ? `${topic.label} ilgi alanına göre` : 'Topluluklarda konuşuluyor'
+  if (props.post.isLocalDemo) return 'Yeni paylaştığın gönderi'
+  if (props.feedbackState === 'interested') return 'Verdiğin olumlu geri bildirime göre'
+
+  const matchedTopic = visibleTopics.value.find((topic) =>
+    props.selectedInterestIds.includes(topic.id),
+  )
+  if (matchedTopic) return `${matchedTopic.label} ilgi alanına göre`
+  if (props.post.discoveryMetadata.daily) return 'Bugünün seçkisinde yükseliyor'
+  if (props.post.discoveryMetadata.weekly) return 'Bu haftanın seçkisinde öne çıkıyor'
+  return 'Topluluklarda konuşuluyor'
 })
 const timeLabel = computed(() => {
   if (props.post.discoveryMetadata.daily) return 'Bugün'
   if (props.post.discoveryMetadata.weekly) return 'Bu hafta'
   return 'Yakın zamanda'
 })
+
+function restoreOptionsFocus() {
+  nextTick(() => optionsButton.value?.$el?.focus())
+}
 </script>
 
 <style scoped>
 .feed-post {
-  padding: 20px;
+  padding: var(--experience-post-padding, 20px);
   background: var(--ns-surface);
   border-bottom: 1px solid var(--ns-border);
+  transition: padding var(--experience-motion-duration, var(--motion-base)) var(--ease-standard);
 }
 
 .feed-post:last-child {
@@ -149,9 +222,8 @@ const timeLabel = computed(() => {
 .feed-post__header,
 .feed-post__author > div,
 .feed-post__feedback,
-.feed-post__feedback > div,
 .feed-post__actions,
-.feed-post--removed {
+.recommendation-dialog__heading {
   display: flex;
   align-items: center;
 }
@@ -206,9 +278,12 @@ const timeLabel = computed(() => {
 
 .feed-post__body {
   margin: 12px 0 0 52px;
-  font-size: 15px;
-  line-height: 1.55;
+  font-size: var(--experience-body-size, 15px);
+  line-height: var(--experience-line-height, 1.55);
   white-space: pre-line;
+  transition:
+    font-size var(--experience-motion-duration, var(--motion-base)) var(--ease-standard),
+    line-height var(--experience-motion-duration, var(--motion-base)) var(--ease-standard);
 }
 
 .feed-post__media {
@@ -216,6 +291,7 @@ const timeLabel = computed(() => {
   width: calc(100% - 52px);
   margin: 14px 0 0 52px;
   object-fit: cover;
+  max-height: var(--experience-media-max-height, 400px);
   background: var(--ns-bg-subtle);
   border: 1px solid var(--ns-border);
   border-radius: var(--radius-md);
@@ -246,7 +322,7 @@ const timeLabel = computed(() => {
 }
 
 .feed-post__topics {
-  display: flex;
+  display: var(--experience-secondary-display, flex);
   flex-wrap: wrap;
   gap: 6px;
   margin: 14px 0 0 52px;
@@ -284,10 +360,6 @@ const timeLabel = computed(() => {
   color: var(--ns-success);
 }
 
-.feed-post__feedback > div {
-  flex: 0 0 auto;
-}
-
 .feed-post__feedback .q-btn {
   min-height: 40px;
   padding: 0 8px;
@@ -320,34 +392,77 @@ const timeLabel = computed(() => {
   background: var(--ns-brand-soft);
 }
 
-.feed-post--removed {
-  gap: 12px;
-  min-height: 96px;
+.feed-post__actions button:active {
+  transform: scale(0.94);
+}
+
+.feed-post__actions .feed-action--active {
+  color: var(--ns-brand);
+  background: var(--ns-brand-soft);
+}
+
+.feed-post__menu {
+  min-width: 250px;
+}
+
+.feed-post__menu .q-item {
+  min-height: 48px;
+}
+
+.feed-post__menu .q-item__section--avatar {
+  min-width: 36px;
   color: var(--ns-text-secondary);
 }
 
-.feed-post--removed > div {
+.recommendation-dialog {
+  width: min(92vw, 460px);
+  color: var(--ns-text);
+  background: var(--ns-surface);
+  border-radius: var(--radius-lg);
+}
+
+.recommendation-dialog__heading {
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.recommendation-dialog__heading > div {
   display: grid;
-  flex: 1;
   gap: 3px;
 }
 
-.feed-post--removed strong {
-  color: var(--ns-text);
-  font-size: 13px;
-}
-
-.feed-post--removed span {
+.recommendation-dialog__heading span {
+  color: var(--ns-brand);
   font-size: 11px;
+  font-weight: 700;
 }
 
-.feed-post--removed .q-btn {
-  min-height: 40px;
+.recommendation-dialog h2,
+.recommendation-dialog p {
+  margin: 0;
+}
+
+.recommendation-dialog h2 {
+  font-size: 20px;
+}
+
+.recommendation-dialog p {
+  color: var(--ns-text-secondary);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.recommendation-dialog p + p {
+  margin-top: 10px;
+}
+
+.recommendation-dialog .q-card__actions .q-btn {
+  min-height: 44px;
 }
 
 @media (max-width: 599px) {
   .feed-post {
-    padding: 16px;
+    padding: var(--experience-post-padding, 16px);
   }
 
   .feed-post__reason,
@@ -366,19 +481,18 @@ const timeLabel = computed(() => {
     flex-direction: column;
   }
 
-  .feed-post__feedback > div {
-    justify-content: space-between;
-  }
-
   .feed-post__feedback .q-btn {
     min-height: 44px;
   }
-}
 
-@media (max-width: 380px) {
-  .feed-post__feedback .q-btn {
-    padding: 0 4px;
-    font-size: 10px;
+  .feed-post__header > .q-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .feed-post__actions button,
+  .feed-post__poll button {
+    min-height: 44px;
   }
 }
 </style>

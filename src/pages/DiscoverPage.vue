@@ -68,6 +68,13 @@
             </div>
           </template>
 
+          <div v-else-if="hasError" class="discover-empty" role="alert">
+            <q-icon name="wifi_off" size="36px" aria-hidden="true" />
+            <h3>Keşif seçkileri yenilenemedi</h3>
+            <p>Bağlantını kontrol edip seçkileri yeniden yükleyebilirsin.</p>
+            <q-btn outline no-caps color="primary" label="Tekrar dene" @click="clearPreviewState" />
+          </div>
+
           <div v-else-if="visibleItems.length === 0" class="discover-empty">
             <q-icon name="travel_explore" size="36px" aria-hidden="true" />
             <h3>Bu aramada bir seçki bulamadık</h3>
@@ -95,23 +102,6 @@
             </div>
           </template>
         </section>
-
-        <aside class="rising-panel" aria-labelledby="rising-title">
-          <div class="rising-panel__heading">
-            <span class="discover-eyebrow">Canlı başlıklar</span>
-            <h2 id="rising-title">Yükselenler</h2>
-          </div>
-          <ol>
-            <li v-for="(topic, index) in personalizedTopics" :key="topic.id">
-              <span>{{ index + 1 }}</span>
-              <div>
-                <strong>{{ topic.label }}</strong>
-                <small>{{ topicReason(topic) }}</small>
-              </div>
-            </li>
-          </ol>
-          <router-link to="/onboarding">İlgi alanlarını düzenle</router-link>
-        </aside>
       </div>
     </main>
   </div>
@@ -153,6 +143,7 @@ const contexts = {
 
 const activeContext = computed(() => contexts[activeTab.value])
 const isLoading = computed(() => route.query.state === 'loading')
+const hasError = computed(() => route.query.state === 'error')
 const forceEmpty = computed(() => route.query.state === 'empty')
 const baseItems = computed(() => {
   if (activeTab.value === 'weekly') return store.weeklyPicks
@@ -198,15 +189,6 @@ const visibleItems = computed(() => {
 
 const heroItem = computed(() => visibleItems.value[0])
 const secondaryItems = computed(() => visibleItems.value.slice(1))
-const personalizedTopics = computed(() => {
-  const selected = new Set(store.user.selectedInterests)
-  return [...store.discovery.risingTopics].sort((left, right) => {
-    const leftMatch = left.topicIds.some((id) => selected.has(id))
-    const rightMatch = right.topicIds.some((id) => selected.has(id))
-    return Number(rightMatch) - Number(leftMatch) || right.score - left.score
-  })
-})
-
 watch(activeTab, (tab) => {
   if (route.query.tab === tab) return
   router.replace({ query: { ...route.query, tab } })
@@ -235,11 +217,10 @@ function clearSearch() {
   searchQuery.value = ''
 }
 
-function topicReason(topic) {
-  const matchedInterest = store.selectedInterestItems.find((interest) =>
-    topic.topicIds.includes(interest.id),
-  )
-  return matchedInterest ? `${matchedInterest.label} seçimine yakın` : 'Topluluklarda yükseliyor'
+function clearPreviewState() {
+  const query = { ...route.query }
+  delete query.state
+  router.replace({ query })
 }
 </script>
 
@@ -281,7 +262,6 @@ function topicReason(topic) {
 
 .discover-header h1,
 .discover-intro h2,
-.rising-panel h2,
 .discover-empty h3,
 .discover-empty p {
   margin: 0;
@@ -457,66 +437,6 @@ function topicReason(topic) {
   font-size: 14px;
 }
 
-.rising-panel {
-  display: none;
-  align-self: start;
-  padding: 20px;
-  background: var(--ns-surface, #fff);
-  border: 1px solid var(--ns-border, #e6e9ed);
-  border-radius: var(--radius-md, 12px);
-}
-
-.rising-panel__heading {
-  display: grid;
-  gap: 4px;
-}
-
-.rising-panel h2 {
-  font-size: 18px;
-}
-
-.rising-panel ol {
-  padding: 0;
-  margin: 16px 0;
-  list-style: none;
-}
-
-.rising-panel li {
-  display: grid;
-  grid-template-columns: 24px minmax(0, 1fr);
-  gap: 8px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--ns-border, #e6e9ed);
-}
-
-.rising-panel li > span {
-  color: var(--ns-text-tertiary, #8b929b);
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.rising-panel li > div {
-  display: grid;
-  gap: 3px;
-}
-
-.rising-panel strong {
-  font-size: 13px;
-  line-height: 1.35;
-}
-
-.rising-panel small {
-  color: var(--ns-text-secondary, #5f6670);
-  font-size: 11px;
-}
-
-.rising-panel a {
-  color: var(--ns-brand, #1687f8);
-  font-size: 12px;
-  font-weight: 600;
-  text-decoration: none;
-}
-
 @media (min-width: 600px) {
   .discover-header {
     padding: 8px 24px;
@@ -532,16 +452,6 @@ function topicReason(topic) {
 
   .discover-intro {
     grid-template-columns: minmax(0, 1fr) 300px;
-  }
-}
-
-@media (min-width: 960px) {
-  .discover-layout {
-    grid-template-columns: minmax(0, 680px) minmax(260px, 1fr);
-  }
-
-  .rising-panel {
-    display: block;
   }
 }
 

@@ -112,6 +112,10 @@ function restart() {
   margin-top: var(--space-6);
 }
 
+.campaign-hero__actions .q-btn {
+  min-height: var(--touch-target);
+}
+
 .campaign-hero__primary {
   min-height: 50px;
   padding-inline: var(--space-5);

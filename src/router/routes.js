@@ -52,7 +52,7 @@ const routes = [
       {
         path: 'settings',
         name: 'settings',
-        component: () => import('@/pages/PlaceholderPage.vue'),
+        component: () => import('@/pages/ExperienceSettingsPage.vue'),
       },
       { path: 'second', redirect: '/discover' },
     ],

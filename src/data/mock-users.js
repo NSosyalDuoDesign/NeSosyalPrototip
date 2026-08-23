@@ -17,7 +17,7 @@ export const demoUsers = Object.freeze([
     id: 'user-nsosyal-bilim',
     displayName: 'NSosyal Bilim',
     handle: '@nsosyalbilim',
-    avatar: '/icons/favicon-128x128.png',
+    avatar: null,
     bio: 'Bilim dünyasından anlaşılır ve merak uyandıran notlar.',
     verified: true,
   },

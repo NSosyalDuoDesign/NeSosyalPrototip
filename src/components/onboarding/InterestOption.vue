@@ -50,9 +50,9 @@ defineEmits(['toggle'])
   border-radius: var(--radius-md, 12px);
   cursor: pointer;
   transition:
-    border-color 160ms cubic-bezier(0.2, 0, 0, 1),
-    background-color 160ms cubic-bezier(0.2, 0, 0, 1),
-    transform 160ms cubic-bezier(0.2, 0, 0, 1);
+    border-color var(--motion-fast) var(--ease-standard),
+    background-color var(--motion-fast) var(--ease-standard),
+    transform var(--motion-fast) var(--ease-standard);
 }
 
 .interest-option:hover {

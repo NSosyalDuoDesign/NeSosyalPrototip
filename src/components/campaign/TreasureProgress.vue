@@ -45,6 +45,11 @@ const percentage = computed(() => (props.total > 0 ? (props.completed / props.to
 
 .treasure-progress__ring {
   flex: 0 0 auto;
+  transition: transform var(--motion-base) var(--ease-standard);
+}
+
+.treasure-progress:hover .treasure-progress__ring {
+  transform: scale(1.04);
 }
 
 .treasure-progress__ring span {

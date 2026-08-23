@@ -138,8 +138,8 @@ const showSuggestion = ref(false)
 .intervention-leave-active {
   overflow: hidden;
   transition:
-    opacity 180ms cubic-bezier(0.2, 0, 0, 1),
-    transform 180ms cubic-bezier(0.2, 0, 0, 1);
+    opacity var(--motion-base) var(--ease-standard),
+    transform var(--motion-base) var(--ease-standard);
 }
 
 .intervention-enter-from,

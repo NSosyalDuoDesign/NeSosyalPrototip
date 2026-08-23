@@ -44,7 +44,10 @@
   --mobile-nav-height: 62px;
   --motion-fast: 160ms;
   --motion-base: 220ms;
+  --motion-slow: 240ms;
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --touch-target: 44px;
+  --avatar-size: 42px;
 }
 
 [data-theme='dark'],
@@ -143,6 +146,15 @@ button,
 
 .q-btn {
   text-transform: none;
+  transition:
+    color var(--motion-fast) var(--ease-standard),
+    background-color var(--motion-fast) var(--ease-standard),
+    border-color var(--motion-fast) var(--ease-standard),
+    transform var(--motion-fast) var(--ease-standard);
+}
+
+.q-btn:active:not(.q-btn--disabled) {
+  transform: scale(0.97);
 }
 
 .q-btn.bg-primary {
@@ -156,9 +168,29 @@ button,
 }
 
 .icon-action {
-  min-width: 44px;
-  min-height: 44px;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
   color: var(--ns-text-secondary);
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+}
+
+.q-tab,
+.q-item {
+  transition:
+    color var(--motion-fast) var(--ease-standard),
+    background-color var(--motion-fast) var(--ease-standard);
 }
 
 .profile-menu {
@@ -229,11 +261,41 @@ button,
   color: var(--ns-text-secondary);
 }
 
-[data-experience='comfortable'] {
-  font-size: 106%;
+.ns-app-shell[data-experience] {
+  --experience-font-scale: 1;
+  --experience-post-padding: 20px;
+  --experience-body-size: 15px;
+  --experience-line-height: 1.55;
+  --experience-media-max-height: 400px;
+  --experience-secondary-display: flex;
+  --experience-motion-duration: var(--motion-base);
 }
 
-[data-experience='comfortable'] .q-btn {
+.ns-app-shell[data-experience='fluid'] {
+  --experience-font-scale: 0.97;
+  --experience-post-padding: 15px;
+  --experience-body-size: 14px;
+  --experience-line-height: 1.45;
+  --experience-media-max-height: 260px;
+  --experience-secondary-display: none;
+  --experience-motion-duration: 120ms;
+}
+
+.ns-app-shell[data-experience='comfortable'] {
+  --experience-font-scale: 1.06;
+  --experience-post-padding: 24px;
+  --experience-body-size: 16px;
+  --experience-line-height: 1.65;
+  --experience-media-max-height: 460px;
+  --experience-secondary-display: flex;
+  --experience-motion-duration: 240ms;
+}
+
+.ns-app-shell[data-experience] .ns-main-column {
+  font-size: calc(1rem * var(--experience-font-scale));
+}
+
+.ns-app-shell[data-experience='comfortable'] .q-btn {
   letter-spacing: 0;
 }
 

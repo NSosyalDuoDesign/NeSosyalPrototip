@@ -53,21 +53,70 @@
       </section>
 
       <section class="home-feed" aria-label="Kişiselleştirilmiş akış">
-        <div class="home-feed__list">
+        <q-banner
+          v-if="feedbackNotice"
+          class="feedback-notice"
+          role="status"
+          aria-live="polite"
+        >
+          <template #avatar><q-icon :name="feedbackNotice.icon" /></template>
+          {{ feedbackNotice.message }}
+          <template #action>
+            <q-btn flat no-caps color="primary" label="Geri al" @click="undoFeedback" />
+          </template>
+        </q-banner>
+
+        <div v-if="isLoading" class="feed-state feed-state--loading" aria-label="Akış yükleniyor">
+          <article v-for="item in 3" :key="item" class="feed-skeleton">
+            <div><q-skeleton type="QAvatar" /><q-skeleton type="text" width="38%" /></div>
+            <q-skeleton type="text" />
+            <q-skeleton type="text" width="82%" />
+            <q-skeleton height="156px" />
+          </article>
+        </div>
+
+        <div v-else-if="hasError" class="feed-state feed-state--message" role="alert">
+          <q-icon name="wifi_off" size="30px" aria-hidden="true" />
+          <h2>Akış şu anda yenilenemedi</h2>
+          <p>Bağlantını kontrol edip tekrar deneyebilirsin.</p>
+          <q-btn outline no-caps color="primary" label="Tekrar dene" @click="clearPreviewState" />
+        </div>
+
+        <div
+          v-else-if="isEmpty || visibleFeed.length === 0"
+          class="feed-state feed-state--message"
+        >
+          <q-icon :name="activeTab === 'media' ? 'perm_media' : 'dynamic_feed'" size="30px" />
+          <h2>{{ emptyState.title }}</h2>
+          <p>{{ emptyState.description }}</p>
+          <q-btn
+            v-if="activeTab === 'media'"
+            flat
+            no-caps
+            color="primary"
+            label="Akışa dön"
+            @click="activeTab = 'feed'"
+          />
+          <q-btn
+            v-else
+            unelevated
+            no-caps
+            color="primary"
+            label="İlgi alanı seç"
+            to="/onboarding"
+          />
+        </div>
+
+        <div v-else class="home-feed__list">
           <HomeFeedPost
             v-for="post in visibleFeed"
             :key="post.id"
             :post="post"
             :topics="store.interests"
+            :selected-interest-ids="store.user.selectedInterests"
             :feedback-state="post.feedbackState"
-            @feedback="(feedback) => store.setPostFeedback(post.id, feedback)"
+            @feedback="(feedback) => applyFeedback(post, feedback)"
           />
-        </div>
-
-        <div v-if="visibleFeed.length === 0" class="home-feed__empty">
-          <q-icon name="perm_media" size="34px" />
-          <strong>Medya gönderileri burada görünecek</strong>
-          <span>Akış sekmesinden diğer paylaşımlara dönebilirsin.</span>
         </div>
       </section>
     </main>
@@ -76,19 +125,71 @@
 
 <script setup>
 import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import HomeFeedPost from '@/components/feed/HomeFeedPost.vue'
 import UserAvatar from '@/components/ui/UserAvatar.vue'
 import { usePrototypeStore } from '@/stores/prototype.js'
 
+const route = useRoute()
+const router = useRouter()
 const store = usePrototypeStore()
-const activeTab = ref('feed')
-const displayedPostIds = ref(store.personalizedFeed.slice(0, 6).map((post) => post.id))
+const activeTab = ref(route.query.view === 'media' ? 'media' : 'feed')
+const feedbackNotice = ref(null)
 
 const visibleFeed = computed(() => {
-  const postsById = Object.fromEntries(store.personalizedFeed.map((post) => [post.id, post]))
-  const feed = displayedPostIds.value.map((postId) => postsById[postId]).filter(Boolean)
+  const feed = store.personalizedFeed
+    .filter((post) => post.feedbackState !== 'notInterested')
+    .slice(0, 6)
+
   return activeTab.value === 'media' ? feed.filter((post) => post.media) : feed
 })
+const previewState = computed(() => String(route.query.state ?? ''))
+const isLoading = computed(() => previewState.value === 'loading')
+const hasError = computed(() => previewState.value === 'error')
+const isEmpty = computed(() => previewState.value === 'empty')
+const emptyState = computed(() =>
+  activeTab.value === 'media'
+    ? {
+        title: 'Medya gönderileri burada görünecek',
+        description: 'Akış sekmesinden diğer paylaşımlara dönebilirsin.',
+      }
+    : {
+        title: 'Akışını birlikte oluşturalım',
+        description: 'En az üç ilgi alanı seçtiğinde sana yakın içerikler burada sıralanır.',
+      },
+)
+
+function applyFeedback(post, feedback) {
+  const previousFeedback = post.feedbackState
+  store.setPostFeedback(post.id, feedback)
+
+  if (feedback === 'neutral') {
+    feedbackNotice.value = null
+    return
+  }
+
+  feedbackNotice.value = {
+    postId: post.id,
+    previousFeedback,
+    icon: feedback === 'interested' ? 'recommend' : 'visibility_off',
+    message:
+      feedback === 'interested'
+        ? 'Akışın güncellendi. Buna benzer içerikler daha görünür olacak.'
+        : 'Gönderi gizlendi. Buna benzer içerikleri daha az göstereceğiz.',
+  }
+}
+
+function undoFeedback() {
+  if (!feedbackNotice.value) return
+  store.setPostFeedback(feedbackNotice.value.postId, feedbackNotice.value.previousFeedback)
+  feedbackNotice.value = null
+}
+
+function clearPreviewState() {
+  const query = { ...route.query }
+  delete query.state
+  router.replace({ query })
+}
 
 const composerTools = [
   { label: 'Görsel ekle', icon: 'image', to: '/compose' },
@@ -181,8 +282,8 @@ const composerTools = [
 }
 
 .composer-entry__prompt a {
-  min-height: 48px;
   display: flex;
+  min-height: 48px;
   align-items: center;
   color: var(--ns-text-tertiary);
   font-size: 0.96rem;
@@ -232,23 +333,76 @@ const composerTools = [
   border-radius: 0 0 18px 18px;
 }
 
-.home-feed__empty {
+.feedback-notice {
+  color: var(--ns-brand);
+  background: var(--ns-surface);
+  border-bottom: 1px solid var(--ns-border);
+}
+
+.feedback-notice .q-btn {
+  min-height: 40px;
+}
+
+.feed-state--loading {
   display: grid;
-  min-height: 260px;
+  overflow: hidden;
+  border-radius: 0 0 18px 18px;
+}
+
+.feed-skeleton {
+  display: grid;
+  gap: 10px;
+  padding: 20px;
+  background: var(--ns-surface);
+  border-bottom: 1px solid var(--ns-border);
+}
+
+.feed-skeleton:last-child {
+  border-bottom: 0;
+}
+
+.feed-skeleton > div {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.feed-state--message {
+  display: grid;
+  min-height: 300px;
   place-items: center;
   align-content: center;
   gap: 8px;
-  padding: 32px;
+  padding: 36px 24px;
   color: var(--ns-text-secondary);
   text-align: center;
+  background: var(--ns-surface);
+  border-radius: 0 0 18px 18px;
 }
 
-.home-feed__empty strong {
+.feed-state--message .q-icon {
+  color: var(--ns-brand);
+}
+
+.feed-state--message h2,
+.feed-state--message p {
+  margin: 0;
+}
+
+.feed-state--message h2 {
   color: var(--ns-text);
+  font-size: 1.06rem;
 }
 
-.home-feed__empty span {
+.feed-state--message p {
+  max-width: 360px;
   font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.feed-state--message .q-btn {
+  min-height: 44px;
+  margin-top: 4px;
 }
 
 @media (max-width: 1699px) {
@@ -311,7 +465,9 @@ const composerTools = [
   }
 
   .home-feed,
-  .home-feed__list {
+  .home-feed__list,
+  .feed-state--loading,
+  .feed-state--message {
     border-radius: 0;
     box-shadow: none;
   }

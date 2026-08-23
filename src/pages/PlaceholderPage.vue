@@ -5,7 +5,13 @@
       <q-icon :name="content.icon" size="36px" />
       <h2>{{ content.heading }}</h2>
       <p>{{ content.body }}</p>
-      <q-btn flat no-caps color="primary" label="Ana sayfaya dön" to="/home" />
+      <q-btn
+        flat
+        no-caps
+        color="primary"
+        :label="content.actionLabel ?? 'Ana sayfaya dön'"
+        :to="content.actionTo ?? '/home'"
+      />
     </div>
   </q-page>
 </template>
@@ -14,24 +20,12 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import PageSectionHeader from '@/components/shell/PageSectionHeader.vue'
+import { usePrototypeStore } from '@/stores/prototype.js'
 
 const route = useRoute()
+const store = usePrototypeStore()
 
 const pageContent = {
-  discover: {
-    title: 'Keşfet',
-    description: 'Yeni başlıklar ve topluluklar',
-    icon: 'explore',
-    heading: 'Keşif alanı hazırlanıyor',
-    body: 'Günlük, haftalık ve gözden kaçan içerikler sonraki geliştirme adımlarında burada buluşacak.',
-  },
-  create: {
-    title: 'Oluştur',
-    description: 'Toplulukla paylaş',
-    icon: 'edit',
-    heading: 'Yeni gönderi alanı hazırlanıyor',
-    body: 'Gönderi oluşturma deneyimi sonraki geliştirme adımlarında bu kabuğa bağlanacak.',
-  },
   notifications: {
     title: 'Bildirimler',
     description: 'Seni ilgilendiren gelişmeler',
@@ -43,19 +37,25 @@ const pageContent = {
     title: 'Profil',
     description: '@ahmetzor',
     icon: 'person_outline',
-    heading: 'Profil alanı hazırlanıyor',
-    body: 'Kimliğin, ilgi alanların ve paylaşımların için ayrılan bu alan yakında ayrıntılanacak.',
-  },
-  settings: {
-    title: 'Ayarlar',
-    description: 'Deneyimini kontrol et',
-    icon: 'settings',
-    heading: 'Tercihler alanı hazırlanıyor',
-    body: 'Akış ve deneyim tercihlerini ilerleyen geliştirme adımlarında buradan yönetebileceksin.',
+    heading: 'Kişisel alanın',
+    body: 'Kimliğin, ilgi alanların ve paylaşımların bu giriş noktasında bir araya gelir.',
   },
 }
 
-const content = computed(() => pageContent[route.name] ?? pageContent.discover)
+const content = computed(() => {
+  if (route.name === 'profile') {
+    return {
+      ...pageContent.profile,
+      description: store.user.handle,
+      heading: store.user.displayName,
+      body: store.user.bio,
+      actionLabel: 'İlgi alanlarımı düzenle',
+      actionTo: '/onboarding',
+    }
+  }
+
+  return pageContent[route.name] ?? pageContent.notifications
+})
 </script>
 
 <style scoped>

@@ -7,6 +7,7 @@ const feedbackValues = new Set(['neutral', 'interested', 'notInterested'])
 const presetValues = new Set(['fluid', 'balanced', 'comfortable'])
 const validInterestIds = new Set(interestIds)
 const validPostIds = new Set(postIds)
+const validTreasureStages = new Set([1, 2, 3])
 
 function sanitizeFeedbackMap(value, validKeys) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
@@ -25,6 +26,13 @@ export function sanitizePrototypePreferences(value) {
   const selectedInterests = Array.isArray(user.selectedInterests)
     ? [...new Set(user.selectedInterests.filter((id) => validInterestIds.has(id)))]
     : []
+  const treasure =
+    value.treasureHunt && typeof value.treasureHunt === 'object' ? value.treasureHunt : {}
+  const completedStages = Array.isArray(treasure.completedStages)
+    ? [...new Set(treasure.completedStages.filter((stage) => validTreasureStages.has(stage)))].sort(
+        (left, right) => left - right,
+      )
+    : []
 
   return {
     user: {
@@ -36,6 +44,14 @@ export function sanitizePrototypePreferences(value) {
     },
     postFeedback: sanitizeFeedbackMap(value.postFeedback, validPostIds),
     topicFeedback: sanitizeFeedbackMap(value.topicFeedback, validInterestIds),
+    treasureHunt: {
+      currentStage: completedStages.length,
+      completedStages,
+      simulatedScans: completedStages.map((stage) => `NS-${String(stage).padStart(2, '0')}`),
+      rewardUnlocked: completedStages.length === validTreasureStages.size,
+      rewardClaimed:
+        completedStages.length === validTreasureStages.size && treasure.rewardClaimed === true,
+    },
   }
 }
 
@@ -64,6 +80,7 @@ export function clearPrototypePreferences(storage = globalThis.localStorage) {
 
   try {
     storage.removeItem(PROTOTYPE_STORAGE_KEY)
+    storage.removeItem('ne-sosyal-treasure-hunt')
   } catch {
     // Ignore unavailable or quota-limited storage in the browser prototype.
   }

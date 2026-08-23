@@ -27,10 +27,7 @@
         />
       </header>
 
-      <p v-if="currentStep.status === 'integration'" class="demo-toolbar__dependency">
-        <q-icon name="construction" aria-hidden="true" /> A entegrasyonu bekleniyor
-      </p>
-      <p v-else>{{ currentStep.description }}</p>
+      <p>{{ currentStep.description }}</p>
 
       <div class="demo-toolbar__actions">
         <q-btn flat no-caps label="Tüm adımlar" :to="demoOverviewLocation" />
@@ -180,7 +177,8 @@ function resetDemo() {
 }
 
 .demo-toolbar__panel header .q-btn {
-  flex: 0 0 40px;
+  flex: 0 0 var(--touch-target);
+  min-height: var(--touch-target);
   color: #d9e0e7;
 }
 
@@ -190,20 +188,13 @@ function resetDemo() {
   line-height: 1.45;
 }
 
-.demo-toolbar__dependency {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  color: #ffcd70 !important;
-}
-
 .demo-toolbar__actions {
   padding-top: 10px;
   border-top: 1px solid #3a414b;
 }
 
 .demo-toolbar__actions .q-btn {
-  min-height: 40px;
+  min-height: var(--touch-target);
   font-size: 12px;
 }
 
@@ -240,6 +231,14 @@ function resetDemo() {
 
   .demo-toolbar__panel {
     width: calc(100vw - 16px);
+    max-height: calc(100dvh - var(--mobile-nav-height) - 32px);
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 959px) {
+  .demo-toolbar {
+    bottom: calc(var(--mobile-nav-height) + max(8px, env(safe-area-inset-bottom)));
   }
 }
 </style>
