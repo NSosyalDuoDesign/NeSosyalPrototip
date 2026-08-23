@@ -34,8 +34,8 @@
         <div>
           <h2 id="dependency-title">Uçtan uca demo hazır</h2>
           <p>
-            Kampanyadan kişisel akışa, keşiften yapıcı paylaşıma ve geri dönüş özetine kadar tüm
-            adımlar aynı yerel state üzerinde oynatılabilir.
+            Kampanyadan kişisel akışa, keşiften geri dönüş özetine kadar tüm adımlar aynı yerel
+            state üzerinde oynatılabilir.
           </p>
         </div>
       </section>
@@ -77,7 +77,7 @@
         </div>
       </section>
 
-      <ol class="demo-steps" aria-label="On adımlı demo akışı">
+      <ol class="demo-steps" :aria-label="`${demoScenario.length} adımlı demo akışı`">
         <li
           v-for="step in demoScenario"
           :key="step.id"
