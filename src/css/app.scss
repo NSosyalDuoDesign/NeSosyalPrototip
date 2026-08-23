@@ -151,11 +151,41 @@ button,
   color: var(--ns-text-secondary);
 }
 
-[data-experience='comfortable'] {
-  font-size: 106%;
+.ns-app-shell[data-experience] {
+  --experience-font-scale: 1;
+  --experience-post-padding: 20px;
+  --experience-body-size: 15px;
+  --experience-line-height: 1.55;
+  --experience-media-max-height: 400px;
+  --experience-secondary-display: flex;
+  --experience-motion-duration: var(--motion-base);
 }
 
-[data-experience='comfortable'] .q-btn {
+.ns-app-shell[data-experience='fluid'] {
+  --experience-font-scale: 0.97;
+  --experience-post-padding: 15px;
+  --experience-body-size: 14px;
+  --experience-line-height: 1.45;
+  --experience-media-max-height: 260px;
+  --experience-secondary-display: none;
+  --experience-motion-duration: 120ms;
+}
+
+.ns-app-shell[data-experience='comfortable'] {
+  --experience-font-scale: 1.06;
+  --experience-post-padding: 24px;
+  --experience-body-size: 16px;
+  --experience-line-height: 1.65;
+  --experience-media-max-height: 460px;
+  --experience-secondary-display: flex;
+  --experience-motion-duration: 240ms;
+}
+
+.ns-app-shell[data-experience] .ns-main-column {
+  font-size: calc(1rem * var(--experience-font-scale));
+}
+
+.ns-app-shell[data-experience='comfortable'] .q-btn {
   letter-spacing: 0;
 }
 

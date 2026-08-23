@@ -172,9 +172,10 @@ const timeLabel = computed(() => {
 
 <style scoped>
 .feed-post {
-  padding: 20px;
+  padding: var(--experience-post-padding, 20px);
   background: var(--ns-surface);
   border-bottom: 1px solid var(--ns-border);
+  transition: padding var(--experience-motion-duration, var(--motion-base)) var(--ease-standard);
 }
 
 .feed-post:last-child {
@@ -240,9 +241,12 @@ const timeLabel = computed(() => {
 
 .feed-post__body {
   margin: 12px 0 0 52px;
-  font-size: 15px;
-  line-height: 1.55;
+  font-size: var(--experience-body-size, 15px);
+  line-height: var(--experience-line-height, 1.55);
   white-space: pre-line;
+  transition:
+    font-size var(--experience-motion-duration, var(--motion-base)) var(--ease-standard),
+    line-height var(--experience-motion-duration, var(--motion-base)) var(--ease-standard);
 }
 
 .feed-post__media {
@@ -250,6 +254,7 @@ const timeLabel = computed(() => {
   width: calc(100% - 52px);
   margin: 14px 0 0 52px;
   object-fit: cover;
+  max-height: var(--experience-media-max-height, 400px);
   background: var(--ns-bg-subtle);
   border: 1px solid var(--ns-border);
   border-radius: var(--radius-md);
@@ -280,7 +285,7 @@ const timeLabel = computed(() => {
 }
 
 .feed-post__topics {
-  display: flex;
+  display: var(--experience-secondary-display, flex);
   flex-wrap: wrap;
   gap: 6px;
   margin: 14px 0 0 52px;
@@ -411,7 +416,7 @@ const timeLabel = computed(() => {
 
 @media (max-width: 599px) {
   .feed-post {
-    padding: 16px;
+    padding: var(--experience-post-padding, 16px);
   }
 
   .feed-post__reason,
