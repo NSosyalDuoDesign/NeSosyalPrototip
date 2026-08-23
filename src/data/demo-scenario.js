@@ -3,19 +3,23 @@ import { DEMO_HARSH_DRAFT } from '@/services/language-intervention.js'
 export const demoScenario = Object.freeze([
   {
     id: 1,
-    title: 'Kampanya',
-    shortTitle: 'QR kampanyası',
-    description: 'QR ile başlayan dijital hazine avını aç.',
+    title: 'Bağlama açılan QR',
+    shortTitle: 'Ziyaretçi QR akışı',
+    description: 'Dizi yayını QR’ından üye olmadan sosyal katmanları aç.',
     status: 'ready',
-    location: { name: 'campaign' },
+    location: { name: 'campaign', query: { context: 'series', mode: 'visitor' } },
   },
   {
     id: 2,
-    title: 'Ödül ve giriş',
-    shortTitle: 'Ödül / giriş',
-    description: 'Simüle edilen avı bitirip NSosyal’e geç.',
+    title: 'Aynı konuşmada devam',
+    shortTitle: 'Üye bağlam merkezi',
+    description: 'Aynı dizi bağlamını doğrudan NSosyal içinde aç.',
     status: 'ready',
-    location: { name: 'campaign-reward' },
+    location: {
+      name: 'campaign-context-hub',
+      params: { contextId: 'series' },
+      query: { source: 'demo', continued: '1' },
+    },
   },
   {
     id: 3,
@@ -90,8 +94,8 @@ export function demoStepById(stepId) {
 export function prepareDemoStep(store, stepId) {
   const id = Number(stepId)
 
-  if (id === 1) store.seedTreasureHunt(false)
-  if (id === 2) store.seedTreasureHunt(true)
+  if (id === 1) store.seedCampaignVisitor('series')
+  if (id === 2) store.seedCampaignMember('series')
   if (id === 3) store.seedOnboarding(false)
   if (id === 4) store.seedOnboarding(true)
   if (id === 5) store.seedSpecificFeedback()

@@ -4,6 +4,13 @@ import { interestTaxonomy, interestIds } from '@/data/mock-interests.js'
 import { mockPosts } from '@/data/mock-posts.js'
 import { discoveryCollections, risingTopics } from '@/data/mock-discovery.js'
 import {
+  CAMPAIGN_ENTRY_MODES,
+  CAMPAIGN_LAYER_IDS,
+  campaignContextIds,
+  campaignReactionOptionIds,
+  resolveCampaignContextId,
+} from '@/data/campaign-contexts.js'
+import {
   clearPrototypePreferences,
   readPrototypePreferences,
   writePrototypePreferences,
@@ -37,12 +44,15 @@ const initialState = () => ({
     overlooked: [...discoveryCollections.overlooked],
     risingTopics: [...risingTopics],
   },
-  treasureHunt: {
-    currentStage: 0,
-    completedStages: [],
-    simulatedScans: [],
-    rewardUnlocked: false,
-    rewardClaimed: false,
+  campaign: {
+    activeContextId: 'series',
+    entryMode: CAMPAIGN_ENTRY_MODES.visitor,
+    reactions: {},
+    revealedLayers: {},
+    conversion: {
+      contextId: null,
+      status: 'idle',
+    },
   },
   composer: {
     draftText: '',
@@ -157,35 +167,119 @@ export const usePrototypeStore = defineStore('prototype', {
       this.setPostFeedback('post-basketball-poll', FEEDBACK_STATES.notInterested)
     },
 
-    advanceTreasureHunt(stageId, simulatedCode) {
-      if (!stageId || this.treasureHunt.completedStages.includes(stageId)) return
-      this.treasureHunt.completedStages.push(stageId)
-      this.treasureHunt.completedStages.sort((left, right) => left - right)
-      if (simulatedCode) this.treasureHunt.simulatedScans.push(simulatedCode)
-      this.treasureHunt.currentStage = this.treasureHunt.completedStages.length
-      this.treasureHunt.rewardUnlocked = this.treasureHunt.completedStages.length >= 3
+    setCampaignEntry(contextId, entryMode = CAMPAIGN_ENTRY_MODES.visitor) {
+      this.campaign.activeContextId = resolveCampaignContextId(contextId)
+      this.campaign.entryMode = Object.values(CAMPAIGN_ENTRY_MODES).includes(entryMode)
+        ? entryMode
+        : CAMPAIGN_ENTRY_MODES.visitor
     },
 
-    claimTreasureReward() {
-      if (this.treasureHunt.rewardUnlocked) this.treasureHunt.rewardClaimed = true
+    selectCampaignReaction(contextId, optionId) {
+      const resolvedId = resolveCampaignContextId(contextId)
+      if (!campaignReactionOptionIds[resolvedId]?.includes(optionId)) return
+
+      this.campaign.activeContextId = resolvedId
+      this.campaign.reactions = {
+        ...this.campaign.reactions,
+        [resolvedId]: optionId,
+      }
+      this.revealCampaignLayer(resolvedId, 'pulse')
     },
 
-    seedTreasureHunt(completed = false) {
-      this.treasureHunt = completed
-        ? {
-            currentStage: 3,
-            completedStages: [1, 2, 3],
-            simulatedScans: ['NS-01', 'NS-02', 'NS-03'],
-            rewardUnlocked: true,
-            rewardClaimed: false,
-          }
-        : {
-            currentStage: 0,
-            completedStages: [],
-            simulatedScans: [],
-            rewardUnlocked: false,
-            rewardClaimed: false,
-          }
+    revealCampaignLayer(contextId, layerId) {
+      const resolvedId = resolveCampaignContextId(contextId)
+      const layerIndex = CAMPAIGN_LAYER_IDS.indexOf(layerId)
+      if (layerIndex === -1) return
+
+      this.campaign.revealedLayers = {
+        ...this.campaign.revealedLayers,
+        [resolvedId]: [...CAMPAIGN_LAYER_IDS.slice(0, layerIndex + 1)],
+      }
+    },
+
+    beginCampaignConversion(contextId) {
+      const resolvedId = resolveCampaignContextId(contextId)
+      if (!this.campaign.revealedLayers[resolvedId]?.includes('live')) return
+
+      this.campaign.conversion = {
+        contextId: resolvedId,
+        status: 'transition',
+      }
+    },
+
+    completeCampaignConversion(contextId) {
+      const resolvedId = resolveCampaignContextId(contextId)
+      this.setCampaignEntry(resolvedId, CAMPAIGN_ENTRY_MODES.member)
+      this.campaign.revealedLayers = {
+        ...this.campaign.revealedLayers,
+        [resolvedId]: [...CAMPAIGN_LAYER_IDS],
+      }
+      this.campaign.conversion = {
+        contextId: resolvedId,
+        status: 'complete',
+      }
+    },
+
+    resetCampaignContext(contextId, entryMode = CAMPAIGN_ENTRY_MODES.visitor) {
+      const resolvedId = resolveCampaignContextId(contextId)
+      const reactions = { ...this.campaign.reactions }
+      const revealedLayers = { ...this.campaign.revealedLayers }
+      delete reactions[resolvedId]
+      delete revealedLayers[resolvedId]
+
+      this.campaign = {
+        activeContextId: resolvedId,
+        entryMode,
+        reactions,
+        revealedLayers,
+        conversion: {
+          contextId: null,
+          status: 'idle',
+        },
+      }
+    },
+
+    seedCampaignVisitor(contextId = 'series') {
+      this.resetCampaignContext(contextId, CAMPAIGN_ENTRY_MODES.visitor)
+    },
+
+    seedCampaignMember(contextId = 'series') {
+      const resolvedId = resolveCampaignContextId(contextId)
+      this.setCampaignEntry(resolvedId, CAMPAIGN_ENTRY_MODES.member)
+      this.campaign.revealedLayers = {
+        ...this.campaign.revealedLayers,
+        [resolvedId]: [...CAMPAIGN_LAYER_IDS],
+      }
+      this.campaign.conversion = {
+        contextId: resolvedId,
+        status: 'complete',
+      }
+    },
+
+    seedCampaignReaction(contextId = 'series') {
+      const resolvedId = resolveCampaignContextId(contextId)
+      const firstOption = campaignReactionOptionIds[resolvedId]?.[0]
+      if (!firstOption) return
+
+      this.seedCampaignVisitor(resolvedId)
+      this.selectCampaignReaction(resolvedId, firstOption)
+      this.campaign.revealedLayers = {
+        ...this.campaign.revealedLayers,
+        [resolvedId]: [...CAMPAIGN_LAYER_IDS],
+      }
+    },
+
+    resetCampaign() {
+      this.campaign = {
+        activeContextId: campaignContextIds[0],
+        entryMode: CAMPAIGN_ENTRY_MODES.visitor,
+        reactions: {},
+        revealedLayers: {},
+        conversion: {
+          contextId: null,
+          status: 'idle',
+        },
+      }
     },
 
     setComposerDraft(draftText) {
@@ -287,7 +381,7 @@ export const usePrototypeStore = defineStore('prototype', {
       this.user.experiencePreset = preferences.user.experiencePreset
       this.postFeedback = preferences.postFeedback
       this.topicFeedback = preferences.topicFeedback
-      this.treasureHunt = preferences.treasureHunt
+      this.campaign = preferences.campaign
       return true
     },
 
@@ -301,7 +395,7 @@ export const usePrototypeStore = defineStore('prototype', {
           },
           postFeedback: this.postFeedback,
           topicFeedback: this.topicFeedback,
-          treasureHunt: this.treasureHunt,
+          campaign: this.campaign,
         },
         storage,
       )

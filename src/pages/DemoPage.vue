@@ -2,7 +2,7 @@
   <div class="demo-page">
     <header class="demo-header">
       <div class="demo-header__brand">
-        <div><strong>NSosyal</strong><span>Ne Sosyal? · Sunum modu</span></div>
+        <div><strong>NSosyal</strong><span>NSosyal · Sunum modu</span></div>
       </div>
       <q-btn flat no-caps icon="close" label="Demo modundan çık" to="/" />
     </header>
@@ -40,6 +40,43 @@
         </div>
       </section>
 
+      <section class="demo-contexts" aria-labelledby="demo-contexts-title">
+        <header>
+          <div>
+            <span>QR bağlam laboratuvarı</span>
+            <h2 id="demo-contexts-title">Aynı yapı, farklı dış dünya anları</h2>
+          </div>
+          <p>Ziyaretçi değer akışını veya doğrudan üye girişini tek tıkla göster.</p>
+        </header>
+
+        <div class="demo-contexts__grid">
+          <article v-for="context in campaignContexts" :key="context.id">
+            <q-icon :name="context.icon" aria-hidden="true" />
+            <div>
+              <span>{{ context.sourceType }}</span>
+              <strong>{{ context.sourceLabel }}</strong>
+              <p>{{ context.headline }}</p>
+            </div>
+            <div class="demo-contexts__actions">
+              <q-btn
+                outline
+                no-caps
+                color="primary"
+                label="Ziyaretçi"
+                @click="openCampaignContext(context.id, CAMPAIGN_ENTRY_MODES.visitor)"
+              />
+              <q-btn
+                flat
+                no-caps
+                color="primary"
+                label="NSosyal üyesi"
+                @click="openCampaignContext(context.id, CAMPAIGN_ENTRY_MODES.member)"
+              />
+            </div>
+          </article>
+        </div>
+      </section>
+
       <ol class="demo-steps" aria-label="On adımlı demo akışı">
         <li
           v-for="step in demoScenario"
@@ -71,6 +108,11 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import {
+  CAMPAIGN_ENTRY_MODES,
+  campaignContexts,
+  campaignEntryLocation,
+} from '@/data/campaign-contexts.js'
 import { demoLocation, demoScenario, demoStepById, prepareDemoStep } from '@/data/demo-scenario.js'
 import { usePrototypeStore } from '@/stores/prototype.js'
 
@@ -84,6 +126,18 @@ const selectedStep = computed(() => demoStepById(route.query.demoStep))
 function openStep(step) {
   prepareDemoStep(store, step.id)
   router.push(demoLocation(step))
+}
+
+function openCampaignContext(contextId, mode) {
+  if (mode === CAMPAIGN_ENTRY_MODES.member) store.seedCampaignMember(contextId)
+  else store.seedCampaignVisitor(contextId)
+
+  router.push(
+    campaignEntryLocation(contextId, mode, {
+      demo: '1',
+      demoStep: mode === CAMPAIGN_ENTRY_MODES.member ? '2' : '1',
+    }),
+  )
 }
 </script>
 
@@ -219,6 +273,111 @@ function openStep(step) {
   line-height: 1.5;
 }
 
+.demo-contexts {
+  display: grid;
+  gap: 16px;
+}
+
+.demo-contexts > header {
+  display: flex;
+  gap: 16px;
+  align-items: end;
+  justify-content: space-between;
+}
+
+.demo-contexts > header > div {
+  display: grid;
+  gap: 3px;
+}
+
+.demo-contexts > header span {
+  color: var(--ns-brand);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.demo-contexts > header h2,
+.demo-contexts > header p,
+.demo-contexts__grid article p {
+  margin: 0;
+}
+
+.demo-contexts > header h2 {
+  font-size: 19px;
+}
+
+.demo-contexts > header p {
+  max-width: 320px;
+  color: var(--ns-text-secondary);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.demo-contexts__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.demo-contexts__grid article {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px;
+  background: var(--ns-surface);
+  border: 1px solid var(--ns-border);
+  border-radius: var(--radius-md);
+}
+
+.demo-contexts__grid article > .q-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  color: var(--ns-brand);
+  background: var(--ns-brand-soft);
+  border-radius: var(--radius-sm);
+  place-items: center;
+}
+
+.demo-contexts__grid article > div:nth-child(2) {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.demo-contexts__grid article span {
+  color: var(--ns-brand);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.demo-contexts__grid article strong {
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.demo-contexts__grid article p {
+  color: var(--ns-text-secondary);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.demo-contexts__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 9px;
+  border-top: 1px solid var(--ns-border);
+}
+
+.demo-contexts__actions .q-btn {
+  min-height: 38px;
+  font-size: 10px;
+}
+
 .demo-steps {
   padding: 0;
   margin: 0;
@@ -323,6 +482,15 @@ function openStep(step) {
     justify-self: start;
     padding-right: 4px;
     padding-left: 4px;
+  }
+
+  .demo-contexts > header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .demo-contexts__grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

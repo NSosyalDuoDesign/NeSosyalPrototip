@@ -8,13 +8,13 @@
       @click="expanded = true"
     >
       <q-icon name="smart_display" size="20px" aria-hidden="true" />
-      <span>Demo {{ currentStep.id }}/10</span>
+      <span>Demo {{ currentStep.id }}/{{ totalSteps }}</span>
     </button>
 
     <div v-else class="demo-toolbar__panel">
       <header>
         <div>
-          <span>Sunum aracı · {{ currentStep.id }}/10</span>
+          <span>Sunum aracı · {{ currentStep.id }}/{{ totalSteps }}</span>
           <strong>{{ currentStep.shortTitle }}</strong>
         </div>
         <q-btn
@@ -32,7 +32,7 @@
       <div class="demo-toolbar__actions">
         <q-btn flat no-caps label="Tüm adımlar" :to="demoOverviewLocation" />
         <q-btn
-          v-if="currentStep.id === 10"
+          v-if="currentStep.id === totalSteps"
           unelevated
           no-caps
           color="negative"
@@ -71,6 +71,7 @@ import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   demoLocation,
+  demoScenario,
   demoStepById,
   prepareDemoStep,
   resetDemoState,
@@ -82,6 +83,7 @@ const router = useRouter()
 const store = usePrototypeStore()
 const expanded = ref(route.name === 'demo')
 const confirmReset = ref(false)
+const totalSteps = demoScenario.length
 
 const demoActive = computed(() => route.name === 'demo' || Boolean(route.query.demo))
 const currentStep = computed(() => demoStepById(route.query.demoStep))
