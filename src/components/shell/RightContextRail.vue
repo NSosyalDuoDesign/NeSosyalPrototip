@@ -1,74 +1,67 @@
 <template>
-  <aside class="right-context" aria-label="Gündem ve öneriler">
-    <q-input
-      v-model="search"
-      dense
-      standout
-      placeholder="NSosyal'de ara"
-      aria-label="NSosyal'de ara"
-      class="context-search"
-    >
-      <template #prepend><q-icon name="search" /></template>
-      <template v-if="search" #append>
-        <q-icon
-          name="close"
-          class="cursor-pointer"
-          role="button"
-          aria-label="Aramayı temizle"
-          @click="search = ''"
-        />
-      </template>
-    </q-input>
+  <aside class="right-context" aria-label="Arama, profil ve popüler gündem">
+    <div class="right-context__tools">
+      <q-input
+        v-model="search"
+        dense
+        outlined
+        rounded
+        placeholder="Arama yap"
+        aria-label="NSosyal'de ara"
+        class="context-search"
+      >
+        <template #prepend><q-icon name="search" /></template>
+        <template v-if="search" #append>
+          <q-icon
+            name="close"
+            class="cursor-pointer"
+            role="button"
+            aria-label="Aramayı temizle"
+            @click="search = ''"
+          />
+        </template>
+      </q-input>
+      <ProfileMenu />
+    </div>
 
-    <RouterLink to="/campaign" class="campaign-entry">
-      <q-icon name="qr_code_scanner" size="24px" />
-      <span>
-        <small>Ne Sosyal?</small>
-        <strong>QR keşif rotasını aç</strong>
-      </span>
-      <q-icon name="arrow_forward" size="18px" />
-    </RouterLink>
+    <section class="popular-panel" aria-labelledby="popular-title">
+      <header>
+        <h2 id="popular-title">Popüler</h2>
+        <RouterLink to="/discover">Tümünü gör <q-icon name="chevron_right" /></RouterLink>
+      </header>
 
-    <SurfacePanel title="Bugün konuşulanlar">
-      <ol class="trend-list">
+      <ol>
         <li v-for="trend in trends" :key="trend.label">
-          <span>{{ trend.context }}</span>
-          <strong>{{ trend.label }}</strong>
-          <small>{{ trend.count }}</small>
+          <q-icon name="tag" aria-hidden="true" />
+          <RouterLink :to="trend.to">
+            <strong>{{ trend.label }}</strong>
+            <span>{{ trend.count }}</span>
+          </RouterLink>
         </li>
       </ol>
-      <RouterLink class="panel-link" to="/discover">Tümünü keşfet</RouterLink>
-    </SurfacePanel>
+    </section>
 
-    <SurfacePanel title="Takip edebilirsin">
-      <div v-for="person in suggestions" :key="person.handle" class="suggestion-row">
-        <UserAvatar :name="person.name" :tone="person.tone" size="40px" />
-        <div class="suggestion-row__identity">
-          <strong>{{ person.name }}</strong>
-          <span>{{ person.handle }}</span>
-        </div>
-        <q-btn outline no-caps label="Takip et" class="follow-button" />
-      </div>
-    </SurfacePanel>
+    <RouterLink to="/return?mode=returning" class="message-dock">
+      <q-icon name="chat_bubble_outline" size="24px" />
+      <strong>Mesajlar</strong>
+      <q-icon name="keyboard_arrow_up" size="21px" />
+      <q-icon name="edit_square" size="26px" class="message-dock__compose" />
+    </RouterLink>
   </aside>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import SurfacePanel from '@/components/ui/SurfacePanel.vue'
-import UserAvatar from '@/components/ui/UserAvatar.vue'
+import ProfileMenu from '@/components/shell/ProfileMenu.vue'
 
 const search = ref('')
 
 const trends = [
-  { context: 'Teknoloji · Gündem', label: 'Yerli girişimler', count: '1,8 B gönderi' },
-  { context: 'Bilim · Bugün', label: 'Gökyüzü gözlemi', count: '864 gönderi' },
-  { context: 'Kültür & Sanat', label: 'Şehirde bu hafta', count: '542 gönderi' },
-]
-
-const suggestions = [
-  { name: 'Açık Bilim', handle: '@acikbilim', tone: 'violet' },
-  { name: 'Oyun Atölyesi', handle: '@oyunatolyesi', tone: 'cyan' },
+  { label: 'TeknofestMaviVatan', count: '982 gönderi', to: '/discover?tab=daily' },
+  { label: 'SAKARYA', count: '243 gönderi', to: '/discover?tab=daily' },
+  { label: 'TEKNOFEST', count: '642 gönderi', to: '/campaign' },
+  { label: 'MustafaKemalAtatürk', count: '212 gönderi', to: '/discover?tab=weekly' },
+  { label: 'türkiye', count: '1,9B gönderi', to: '/discover?tab=weekly' },
 ]
 </script>
 
@@ -77,120 +70,160 @@ const suggestions = [
   position: sticky;
   top: 0;
   display: grid;
-  height: max-content;
-  gap: var(--space-4);
-  padding: var(--space-4) 0 var(--space-6) var(--space-4);
+  height: 100dvh;
+  align-content: start;
+  gap: 42px;
+  padding: 40px 12px 24px;
+  background: var(--ns-bg);
+}
+
+.right-context__tools {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 66px;
+  align-items: center;
+  gap: 4px;
 }
 
 .context-search :deep(.q-field__control) {
-  height: 44px;
-  color: var(--ns-text);
-  background: var(--ns-bg-subtle) !important;
-  border-radius: var(--radius-md);
-  box-shadow: none;
-}
-
-.campaign-entry {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  color: var(--ns-text);
-  text-decoration: none;
-  background: var(--ns-brand-soft);
-  border: 1px solid color-mix(in srgb, var(--ns-brand) 22%, var(--ns-border));
-  border-radius: var(--radius-md);
-}
-
-.campaign-entry > .q-icon:first-child {
+  height: 50px;
   color: var(--ns-brand);
+  background: var(--ns-bg) !important;
+  border-radius: var(--radius-round);
 }
 
-.campaign-entry span {
-  display: grid;
-  min-width: 0;
-}
-
-.campaign-entry small {
+.context-search :deep(.q-field__native),
+.context-search :deep(.q-field__prepend),
+.context-search :deep(.q-field__append) {
   color: var(--ns-text-secondary);
-  font-size: 0.6875rem;
 }
 
-.campaign-entry strong {
-  overflow: hidden;
-  font-size: 0.8125rem;
-  text-overflow: ellipsis;
+.context-search :deep(.q-field__native) {
+  font-size: 1rem;
+}
+
+.context-search :deep(.q-field__control::before) {
+  border-color: color-mix(in srgb, var(--ns-brand) 70%, var(--ns-cyan));
+}
+
+.context-search :deep(.q-field__control:hover::before) {
+  border-color: var(--ns-brand);
+}
+
+.popular-panel {
+  padding: 26px 30px 20px;
+  background: var(--ns-surface);
+  border: 1px solid var(--ns-border);
+  border-radius: 18px;
+}
+
+.popular-panel header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.popular-panel h2 {
+  margin: 0;
+  color: var(--ns-text);
+  font-size: 1.12rem;
+}
+
+.popular-panel header a {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ns-text-secondary);
+  font-size: 0.78rem;
+  text-decoration: none;
   white-space: nowrap;
 }
 
-.trend-list {
-  display: grid;
-  gap: var(--space-1);
-  margin: 0;
+.popular-panel ol {
   padding: 0;
+  margin: 0;
   list-style: none;
 }
 
-.trend-list li {
+.popular-panel li {
   display: grid;
-  gap: 2px;
-  padding: var(--space-3) 0;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  min-height: 76px;
   border-bottom: 1px solid var(--ns-border);
 }
 
-.trend-list li:last-child {
+.popular-panel li:last-child {
   border-bottom: 0;
 }
 
-.trend-list span,
-.trend-list small,
-.suggestion-row__identity span {
-  color: var(--ns-text-secondary);
-  font-size: 0.75rem;
-}
-
-.trend-list strong,
-.suggestion-row__identity strong {
-  color: var(--ns-text);
-  font-size: 0.875rem;
-}
-
-.panel-link {
-  display: inline-block;
-  margin-top: var(--space-3);
+.popular-panel li > .q-icon {
   color: var(--ns-brand);
-  font-size: 0.8125rem;
-  font-weight: 600;
+  font-size: 30px;
+}
+
+.popular-panel li a {
+  display: grid;
+  min-width: 0;
+  color: var(--ns-text);
   text-decoration: none;
 }
 
-.suggestion-row {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) 0;
-}
-
-.suggestion-row__identity {
-  display: grid;
-  min-width: 0;
-}
-
-.suggestion-row__identity strong,
-.suggestion-row__identity span {
+.popular-panel strong,
+.popular-panel span {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.follow-button {
-  min-height: 36px;
-  padding-inline: var(--space-3);
+.popular-panel strong {
+  font-size: 0.92rem;
+}
+
+.popular-panel span {
+  margin-top: 3px;
+  color: var(--ns-text-tertiary);
+  font-size: 0.85rem;
+}
+
+.message-dock {
+  position: fixed;
+  right: max(12px, calc((100vw - var(--app-max-width)) / 2 + 12px));
+  bottom: 0;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  width: 360px;
+  min-height: 66px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 18px;
+  color: var(--ns-text);
+  text-decoration: none;
+  background: var(--ns-surface);
+  border: 1px solid var(--ns-border);
+  border-bottom: 0;
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -5px 24px rgb(12 26 45 / 6%);
+}
+
+.message-dock__compose {
+  margin-left: auto;
   color: var(--ns-brand);
-  border-radius: var(--radius-sm);
-  font-size: 0.75rem;
+}
+
+@media (max-width: 1699px) {
+  .right-context {
+    padding-left: 20px;
+  }
+
+  .popular-panel {
+    padding-inline: 22px;
+  }
+
+  .message-dock {
+    width: 330px;
+  }
 }
 
 @media (max-width: 1199px) {

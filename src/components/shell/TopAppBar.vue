@@ -3,18 +3,10 @@
     <q-toolbar class="top-app-bar__toolbar">
       <q-btn flat round dense icon="menu" aria-label="Menüyü aç" class="top-app-bar__action">
         <q-menu class="mobile-more-menu">
-          <q-list style="min-width: 220px">
+          <q-list style="min-width: 230px">
             <q-item v-close-popup clickable to="/campaign">
-              <q-item-section avatar><q-icon name="qr_code_scanner" /></q-item-section>
-              <q-item-section>
-                <q-item-label>QR keşif rotası</q-item-label>
-                <q-item-label caption>Ne Sosyal? kampanyası</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-separator />
-            <q-item v-close-popup clickable to="/settings">
-              <q-item-section avatar><q-icon name="settings" /></q-item-section>
-              <q-item-section>Ayarlar</q-item-section>
+              <q-item-section avatar><q-icon name="stadia_controller" /></q-item-section>
+              <q-item-section>Nod Oyna</q-item-section>
             </q-item>
             <q-item v-close-popup clickable to="/onboarding">
               <q-item-section avatar><q-icon name="tune" /></q-item-section>
@@ -29,48 +21,64 @@
       </q-btn>
 
       <RouterLink to="/home" class="top-app-bar__brand" aria-label="NSosyal ana sayfa">
-        NSosyal
+        <img src="/brand/nsosyal-logo.png" alt="NSosyal" width="34" height="34" />
+        <span>BETA</span>
       </RouterLink>
 
-      <q-btn
-        flat
-        round
-        dense
-        icon="notifications_none"
-        aria-label="Bildirimler"
-        to="/notifications"
-        class="top-app-bar__action"
-      />
+      <ProfileMenu compact />
     </q-toolbar>
   </q-header>
 </template>
+
+<script setup>
+import ProfileMenu from '@/components/shell/ProfileMenu.vue'
+</script>
 
 <style scoped>
 .top-app-bar {
   display: none;
   color: var(--ns-text);
-  background: color-mix(in srgb, var(--ns-surface) 94%, transparent);
+  background: color-mix(in srgb, var(--ns-bg) 94%, transparent);
   border-bottom: 1px solid var(--ns-border);
   box-shadow: none;
+  backdrop-filter: blur(14px);
 }
 
 .top-app-bar__toolbar {
   min-height: var(--mobile-header-height);
-  padding: env(safe-area-inset-top) var(--space-3) 0;
+  padding: env(safe-area-inset-top) 10px 0;
 }
 
 .top-app-bar__brand {
+  display: grid;
+  place-items: center;
   margin: 0 auto;
   color: var(--ns-text);
-  font-size: 1.0625rem;
-  font-weight: 750;
-  letter-spacing: -0.02em;
   text-decoration: none;
+}
+
+.top-app-bar__brand img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.top-app-bar__brand span {
+  margin-top: -5px;
+  font-size: 0.42rem;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
 }
 
 .top-app-bar__action {
   min-width: 44px;
   min-height: 44px;
+}
+
+.top-app-bar :deep(.profile-trigger) {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
 }
 
 @media (max-width: 959px) {
