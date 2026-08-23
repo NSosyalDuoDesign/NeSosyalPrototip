@@ -41,7 +41,10 @@
   --mobile-nav-height: 60px;
   --motion-fast: 160ms;
   --motion-base: 220ms;
+  --motion-slow: 240ms;
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --touch-target: 44px;
+  --avatar-size: 42px;
 }
 
 [data-theme='dark'],
@@ -133,6 +136,15 @@ button,
 
 .q-btn {
   text-transform: none;
+  transition:
+    color var(--motion-fast) var(--ease-standard),
+    background-color var(--motion-fast) var(--ease-standard),
+    border-color var(--motion-fast) var(--ease-standard),
+    transform var(--motion-fast) var(--ease-standard);
+}
+
+.q-btn:active:not(.q-btn--disabled) {
+  transform: scale(0.97);
 }
 
 .q-btn.bg-primary {
@@ -146,9 +158,29 @@ button,
 }
 
 .icon-action {
-  min-width: 44px;
-  min-height: 44px;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
   color: var(--ns-text-secondary);
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+}
+
+.q-tab,
+.q-item {
+  transition:
+    color var(--motion-fast) var(--ease-standard),
+    background-color var(--motion-fast) var(--ease-standard);
 }
 
 .ns-app-shell[data-experience] {

@@ -47,7 +47,16 @@
           <strong>{{ person.name }}</strong>
           <span>{{ person.handle }}</span>
         </div>
-        <q-btn outline no-caps label="Takip et" class="follow-button" />
+        <q-btn
+          :outline="!isFollowing(person.handle)"
+          :flat="isFollowing(person.handle)"
+          no-caps
+          :icon="isFollowing(person.handle) ? 'check' : undefined"
+          :label="isFollowing(person.handle) ? 'Takipte' : 'Takip et'"
+          :aria-pressed="isFollowing(person.handle)"
+          class="follow-button"
+          @click="toggleFollow(person.handle)"
+        />
       </div>
     </SurfacePanel>
   </aside>
@@ -59,6 +68,7 @@ import SurfacePanel from '@/components/ui/SurfacePanel.vue'
 import UserAvatar from '@/components/ui/UserAvatar.vue'
 
 const search = ref('')
+const followedHandles = ref([])
 
 const trends = [
   { context: 'Teknoloji · Gündem', label: 'Yerli girişimler', count: '1,8 B gönderi' },
@@ -70,6 +80,16 @@ const suggestions = [
   { name: 'Açık Bilim', handle: '@acikbilim', tone: 'violet' },
   { name: 'Oyun Atölyesi', handle: '@oyunatolyesi', tone: 'cyan' },
 ]
+
+function isFollowing(handle) {
+  return followedHandles.value.includes(handle)
+}
+
+function toggleFollow(handle) {
+  followedHandles.value = isFollowing(handle)
+    ? followedHandles.value.filter((item) => item !== handle)
+    : [...followedHandles.value, handle]
+}
 </script>
 
 <style scoped>
@@ -191,6 +211,14 @@ const suggestions = [
   color: var(--ns-brand);
   border-radius: var(--radius-sm);
   font-size: 0.75rem;
+  transition:
+    color var(--motion-fast) var(--ease-standard),
+    background var(--motion-fast) var(--ease-standard),
+    transform var(--motion-fast) var(--ease-standard);
+}
+
+.follow-button:active {
+  transform: scale(0.96);
 }
 
 @media (max-width: 1199px) {

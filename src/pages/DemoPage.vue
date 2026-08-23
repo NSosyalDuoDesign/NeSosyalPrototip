@@ -2,8 +2,7 @@
   <div class="demo-page">
     <header class="demo-header">
       <div class="demo-header__brand">
-        <img src="/icons/favicon-96x96.png" alt="" width="32" height="32" />
-        <div><span>Ne Sosyal?</span><strong>Sunum modu</strong></div>
+        <div><strong>NSosyal</strong><span>Ne Sosyal? · Sunum modu</span></div>
       </div>
       <q-btn flat no-caps icon="close" label="Demo modundan çık" to="/" />
     </header>
@@ -117,10 +116,6 @@ function openStep(step) {
   gap: 10px;
 }
 
-.demo-header__brand img {
-  border-radius: 9px;
-}
-
 .demo-header__brand > div {
   display: grid;
 }
@@ -132,7 +127,8 @@ function openStep(step) {
 }
 
 .demo-header__brand strong {
-  font-size: 15px;
+  font-size: 17px;
+  letter-spacing: -0.02em;
 }
 
 .demo-header .q-btn {

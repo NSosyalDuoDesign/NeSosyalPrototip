@@ -27,9 +27,7 @@
         </div>
 
         <div class="composer-editor">
-          <q-avatar size="44px" color="blue-1" text-color="primary">
-            {{ userInitials }}
-          </q-avatar>
+          <UserAvatar :name="store.user.displayName" size="44px" />
           <div class="composer-editor__field">
             <div class="composer-editor__identity">
               <strong>{{ store.user.displayName }}</strong>
@@ -113,6 +111,7 @@
 import { computed, nextTick, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import ConstructiveIntervention from '@/components/composer/ConstructiveIntervention.vue'
+import UserAvatar from '@/components/ui/UserAvatar.vue'
 import { analyzeLanguage, DEMO_HARSH_DRAFT } from '@/services/language-intervention.js'
 import { usePrototypeStore } from '@/stores/prototype.js'
 
@@ -125,13 +124,6 @@ const draft = computed({
   get: () => store.composer.draftText,
   set: (value) => store.setComposerDraft(value),
 })
-const userInitials = computed(() =>
-  store.user.displayName
-    .split(' ')
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join(''),
-)
 const remainingCharacters = computed(() => 500 - store.composer.draftText.length)
 const canPublish = computed(() => store.composer.draftText.trim().length > 0)
 const interventionVisible = computed(

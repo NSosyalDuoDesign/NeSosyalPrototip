@@ -22,7 +22,7 @@
         </section>
 
         <router-link to="/compose" class="composer-entry">
-          <q-avatar size="42px" color="blue-1" text-color="primary">DY</q-avatar>
+          <UserAvatar :name="store.user.displayName" size="42px" />
           <span>Ne düşünüyorsun?</span>
           <q-icon name="edit" aria-hidden="true" />
         </router-link>
@@ -90,7 +90,10 @@
             <q-btn outline no-caps color="primary" label="Tekrar dene" @click="clearPreviewState" />
           </div>
 
-          <div v-else-if="isEmpty || visibleFeed.length === 0" class="feed-state feed-state--message">
+          <div
+            v-else-if="isEmpty || visibleFeed.length === 0"
+            class="feed-state feed-state--message"
+          >
             <q-icon name="dynamic_feed" size="30px" aria-hidden="true" />
             <h3>Akışını birlikte oluşturalım</h3>
             <p>En az üç ilgi alanı seçtiğinde sana yakın içerikler burada sıralanır.</p>
@@ -117,6 +120,7 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import HomeFeedPost from '@/components/feed/HomeFeedPost.vue'
+import UserAvatar from '@/components/ui/UserAvatar.vue'
 import { usePrototypeStore } from '@/stores/prototype.js'
 
 const route = useRoute()
@@ -133,9 +137,7 @@ const selectedLabels = computed(() => {
   return `${labels.join(', ')} ve ${last}`
 })
 const visibleFeed = computed(() => {
-  return store.personalizedFeed
-    .filter((post) => post.feedbackState !== 'notInterested')
-    .slice(0, 6)
+  return store.personalizedFeed.filter((post) => post.feedbackState !== 'notInterested').slice(0, 6)
 })
 const previewState = computed(() => String(route.query.state ?? ''))
 const isLoading = computed(() => previewState.value === 'loading')

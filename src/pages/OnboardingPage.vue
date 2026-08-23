@@ -3,8 +3,8 @@
     <main class="onboarding-shell">
       <header class="onboarding-header">
         <div class="onboarding-brand">
-          <img src="/icons/favicon-96x96.png" alt="" width="32" height="32" />
-          <span>Ne Sosyal?</span>
+          <span>NSosyal</span>
+          <small>Kişiselleştirme</small>
         </div>
         <span class="onboarding-header__step">{{ step }} / 3</span>
       </header>
@@ -186,13 +186,20 @@ function advance() {
 }
 
 .onboarding-brand {
-  gap: 10px;
-  font-size: 16px;
-  font-weight: 700;
+  display: grid;
+  gap: 1px;
 }
 
-.onboarding-brand img {
-  border-radius: 10px;
+.onboarding-brand > span {
+  font-size: 17px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.onboarding-brand > small {
+  color: var(--ns-text-secondary);
+  font-size: 10px;
+  font-weight: 600;
 }
 
 .onboarding-header__step {
@@ -248,6 +255,10 @@ function advance() {
   border: 3px solid var(--ns-surface, #fff);
   border-radius: 50%;
   box-shadow: 0 0 0 1px var(--ns-border-strong, #d8dde3);
+  transition:
+    background var(--motion-fast) var(--ease-standard),
+    box-shadow var(--motion-fast) var(--ease-standard),
+    transform var(--motion-fast) var(--ease-standard);
 }
 
 .step-progress__item--active {
@@ -257,6 +268,7 @@ function advance() {
 .step-progress__item--active .step-progress__dot {
   background: var(--ns-brand, #1687f8);
   box-shadow: 0 0 0 1px var(--ns-brand, #1687f8);
+  transform: scale(1.08);
 }
 
 .onboarding-content {

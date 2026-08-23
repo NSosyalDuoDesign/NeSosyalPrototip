@@ -6,10 +6,7 @@
     <div class="discovery-item__body">
       <DiscoveryReason :text="item.personalizedReason" :icon="reasonIcon" />
       <div class="discovery-item__identity">
-        <q-avatar size="36px" color="blue-1" text-color="primary">
-          <img v-if="post.author.avatar" :src="post.author.avatar" alt="" />
-          <span v-else>{{ initials(post.author.displayName) }}</span>
-        </q-avatar>
+        <UserAvatar :name="post.author.displayName" size="36px" />
         <div>
           <strong>{{ post.author.displayName }}</strong>
           <q-icon
@@ -40,6 +37,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import UserAvatar from '@/components/ui/UserAvatar.vue'
 import DiscoveryReason from './DiscoveryReason.vue'
 
 const props = defineProps({
@@ -68,14 +66,6 @@ const reasonIcon = computed(() => {
   if (props.mode === 'weekly') return 'date_range'
   return 'trending_up'
 })
-
-function initials(displayName) {
-  return displayName
-    .split(' ')
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join('')
-}
 
 function formatCount(value) {
   return new Intl.NumberFormat('tr-TR').format(value)

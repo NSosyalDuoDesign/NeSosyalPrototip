@@ -1,10 +1,7 @@
 <template>
   <article class="feed-post">
     <header class="feed-post__header">
-      <q-avatar size="42px" color="blue-1" text-color="primary">
-        <img v-if="post.author.avatar" :src="post.author.avatar" alt="" />
-        <span v-else>{{ initials }}</span>
-      </q-avatar>
+      <UserAvatar :name="post.author.displayName" :tone="avatarTone" size="42px" />
       <div class="feed-post__author">
         <div>
           <strong>{{ post.author.displayName }}</strong>
@@ -90,13 +87,27 @@
       <button type="button" :aria-label="`${post.engagement.reposts} yeniden paylaşım`">
         <q-icon name="repeat" /> {{ post.engagement.reposts }}
       </button>
-      <button type="button" :aria-label="`${post.engagement.likes} beğeni`">
-        <q-icon name="favorite_border" /> {{ post.engagement.likes }}
+      <button
+        type="button"
+        :class="{ 'feed-action--active': liked }"
+        :aria-label="liked ? 'Beğeniyi kaldır' : `${post.engagement.likes} beğeni; gönderiyi beğen`"
+        :aria-pressed="liked"
+        @click="liked = !liked"
+      >
+        <q-icon :name="liked ? 'favorite' : 'favorite_border'" />
+        {{ post.engagement.likes + (liked ? 1 : 0) }}
       </button>
-      <button type="button" aria-label="Gönderiyi kaydet">
-        <q-icon name="bookmark_border" />
+      <button
+        type="button"
+        :class="{ 'feed-action--active': saved }"
+        :aria-label="saved ? 'Kayıtlardan çıkar' : 'Gönderiyi kaydet'"
+        :aria-pressed="saved"
+        @click="saved = !saved"
+      >
+        <q-icon :name="saved ? 'bookmark' : 'bookmark_border'" />
       </button>
     </footer>
+    <span class="sr-only" aria-live="polite">{{ interactionAnnouncement }}</span>
 
     <q-dialog v-model="explanationOpen">
       <q-card class="recommendation-dialog">
@@ -139,6 +150,7 @@
 
 <script setup>
 import { computed, ref } from 'vue'
+import UserAvatar from '@/components/ui/UserAvatar.vue'
 
 const props = defineProps({
   post: { type: Object, required: true },
@@ -148,14 +160,23 @@ const props = defineProps({
 
 const emit = defineEmits(['feedback'])
 const explanationOpen = ref(false)
+const liked = ref(false)
+const saved = ref(false)
 
-const initials = computed(() =>
-  props.post.author.displayName
-    .split(' ')
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join(''),
-)
+const avatarTone = computed(() => {
+  const tones = ['blue', 'cyan', 'violet']
+  const code = [...props.post.author.id].reduce(
+    (sum, character) => sum + character.charCodeAt(0),
+    0,
+  )
+  return tones[code % tones.length]
+})
+const interactionAnnouncement = computed(() => {
+  if (liked.value && saved.value) return 'Gönderi beğenildi ve kaydedildi.'
+  if (liked.value) return 'Gönderi beğenildi.'
+  if (saved.value) return 'Gönderi kaydedildi.'
+  return ''
+})
 const visibleTopics = computed(() =>
   props.topics.filter((topic) => props.post.topicIds.includes(topic.id)).slice(0, 3),
 )
@@ -351,6 +372,15 @@ const timeLabel = computed(() => {
 }
 
 .feed-post__actions button:hover {
+  color: var(--ns-brand);
+  background: var(--ns-brand-soft);
+}
+
+.feed-post__actions button:active {
+  transform: scale(0.94);
+}
+
+.feed-post__actions .feed-action--active {
   color: var(--ns-brand);
   background: var(--ns-brand-soft);
 }
