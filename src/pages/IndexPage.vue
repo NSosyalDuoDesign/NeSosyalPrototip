@@ -1,119 +1,75 @@
 <template>
   <q-page class="home-page">
     <main class="home-shell">
-      <div class="home-main">
-        <section class="home-welcome" aria-labelledby="home-title">
+      <nav class="home-tabs" role="tablist" aria-label="Ana akış görünümü">
+        <button
+          type="button"
+          role="tab"
+          :aria-selected="activeTab === 'feed'"
+          :class="{ 'home-tabs__item--active': activeTab === 'feed' }"
+          @click="activeTab = 'feed'"
+        >
+          Akış
+        </button>
+        <button
+          type="button"
+          role="tab"
+          :aria-selected="activeTab === 'media'"
+          :class="{ 'home-tabs__item--active': activeTab === 'media' }"
+          @click="activeTab = 'media'"
+        >
+          Medya
+        </button>
+      </nav>
+
+      <section class="composer-entry" aria-labelledby="composer-prompt">
+        <div class="composer-entry__prompt">
+          <UserAvatar :name="store.user.displayName" size="48px" />
+          <RouterLink id="composer-prompt" to="/compose">Gönderi oluşturmak için...</RouterLink>
+        </div>
+
+        <div class="composer-entry__actions" aria-label="Gönderi araçları">
           <div>
-            <span class="home-eyebrow">Merak → Kontrol → Keşif</span>
-            <h1 id="home-title">Merhaba, {{ firstName }}.</h1>
-            <p v-if="store.user.selectedInterests.length">
-              Akışın {{ selectedLabels }} seçimlerine göre şekilleniyor.
-            </p>
-            <p v-else>İlgi alanlarını seç; burada gerçekten sana yakın konuşmalar görmeye başla.</p>
-          </div>
-          <q-btn
-            outline
-            no-caps
-            color="primary"
-            icon="tune"
-            :label="store.user.selectedInterests.length ? 'İlgilerimi düzenle' : 'Akışımı oluştur'"
-            to="/onboarding"
-          />
-        </section>
-
-        <router-link to="/compose" class="composer-entry">
-          <q-avatar size="42px" color="blue-1" text-color="primary">DY</q-avatar>
-          <span>Ne düşünüyorsun?</span>
-          <q-icon name="edit" aria-hidden="true" />
-        </router-link>
-
-        <section class="discovery-strip" aria-labelledby="discovery-strip-title">
-          <div class="section-heading">
-            <div>
-              <span>Keşif rotaları</span>
-              <h2 id="discovery-strip-title">Bugünün ötesine bak</h2>
-            </div>
-            <router-link to="/discover"> Tümünü gör <q-icon name="arrow_forward" /> </router-link>
-          </div>
-          <div class="discovery-strip__links">
-            <router-link
-              v-for="item in discoveryLinks"
-              :key="item.title"
-              :to="item.to"
-              :class="`discovery-link discovery-link--${item.tone}`"
-            >
-              <q-icon :name="item.icon" aria-hidden="true" />
-              <div>
-                <strong>{{ item.title }}</strong>
-                <span>{{ item.description }}</span>
-              </div>
-              <q-icon name="chevron_right" aria-hidden="true" />
-            </router-link>
-          </div>
-        </section>
-
-        <section class="home-feed" aria-labelledby="feed-title">
-          <div class="section-heading section-heading--feed">
-            <div>
-              <span>Senin için</span>
-              <h2 id="feed-title">Akışın</h2>
-            </div>
-            <span class="feed-control-note"><q-icon name="tune" /> Kontrol sende</span>
-          </div>
-          <div class="home-feed__list">
-            <HomeFeedPost
-              v-for="post in visibleFeed"
-              :key="post.id"
-              :post="post"
-              :topics="store.interests"
-              :feedback-state="post.feedbackState"
-              @feedback="(feedback) => store.setPostFeedback(post.id, feedback)"
+            <q-btn
+              v-for="tool in composerTools"
+              :key="tool.label"
+              flat
+              round
+              dense
+              :icon="tool.icon"
+              :aria-label="tool.label"
+              :to="tool.to"
             />
           </div>
-        </section>
-      </div>
-
-      <aside class="home-aside" aria-label="Kısayollar ve gündem">
-        <section class="aside-section">
-          <span class="home-eyebrow">Kaldığın yerden</span>
-          <h2>Sen yokken neler oldu?</h2>
-          <p>
-            İlgi alanlarında değişen başlıkları ve daha az kişinin gördüğü içerikleri kısa bir
-            özette yakala.
-          </p>
           <q-btn
-            flat
+            unelevated
             no-caps
-            color="primary"
-            label="Geri dönüş özetini aç"
-            icon-right="arrow_forward"
-            to="/return?mode=returning"
+            icon="draw"
+            label="Gönder"
+            to="/compose"
+            class="composer-entry__submit"
           />
-        </section>
+        </div>
+      </section>
 
-        <section class="aside-section aside-section--topics">
-          <div class="aside-heading"><span>Yükselenler</span><q-icon name="trending_up" /></div>
-          <ol>
-            <li v-for="(topic, index) in risingTopics" :key="topic.id">
-              <span>{{ index + 1 }}</span>
-              <div>
-                <strong>{{ topic.label }}</strong
-                ><small>{{ topic.description }}</small>
-              </div>
-            </li>
-          </ol>
-          <router-link to="/discover?tab=daily">Bugünün tamamını keşfet</router-link>
-        </section>
+      <section class="home-feed" aria-label="Kişiselleştirilmiş akış">
+        <div class="home-feed__list">
+          <HomeFeedPost
+            v-for="post in visibleFeed"
+            :key="post.id"
+            :post="post"
+            :topics="store.interests"
+            :feedback-state="post.feedbackState"
+            @feedback="(feedback) => store.setPostFeedback(post.id, feedback)"
+          />
+        </div>
 
-        <section class="aside-section aside-section--values">
-          <q-icon name="forum" aria-hidden="true" />
-          <div>
-            <strong>Fikrini söyle, kişiyi değil.</strong>
-            <span>Paylaşırken yapıcı dil desteği yanında.</span>
-          </div>
-          <router-link to="/compose">Gönderi oluştur</router-link>
-        </section>
-      </aside>
+        <div v-if="visibleFeed.length === 0" class="home-feed__empty">
+          <q-icon name="perm_media" size="34px" />
+          <strong>Medya gönderileri burada görünecek</strong>
+          <span>Akış sekmesinden diğer paylaşımlara dönebilirsin.</span>
+        </div>
+      </section>
     </main>
   </q-page>
 </template>
@@ -121,446 +77,249 @@
 <script setup>
 import { computed, ref } from 'vue'
 import HomeFeedPost from '@/components/feed/HomeFeedPost.vue'
+import UserAvatar from '@/components/ui/UserAvatar.vue'
 import { usePrototypeStore } from '@/stores/prototype.js'
 
 const store = usePrototypeStore()
+const activeTab = ref('feed')
 const displayedPostIds = ref(store.personalizedFeed.slice(0, 6).map((post) => post.id))
 
-const firstName = computed(() => store.user.displayName.split(' ')[0])
-const selectedLabels = computed(() => {
-  const labels = store.selectedInterestItems.slice(0, 3).map((interest) => interest.label)
-  if (labels.length === 0) return 'henüz belirlenmemiş ilgi alanı'
-  if (labels.length === 1) return labels[0]
-  const last = labels.pop()
-  return `${labels.join(', ')} ve ${last}`
-})
 const visibleFeed = computed(() => {
   const postsById = Object.fromEntries(store.personalizedFeed.map((post) => [post.id, post]))
-  return displayedPostIds.value.map((postId) => postsById[postId]).filter(Boolean)
+  const feed = displayedPostIds.value.map((postId) => postsById[postId]).filter(Boolean)
+  return activeTab.value === 'media' ? feed.filter((post) => post.media) : feed
 })
-const risingTopics = computed(() => store.discovery.risingTopics.slice(0, 4))
 
-const discoveryLinks = [
-  {
-    title: 'Bugün',
-    description: 'Şimdi yükselen konuşmalar',
-    icon: 'bolt',
-    tone: 'daily',
-    to: '/discover?tab=daily',
-  },
-  {
-    title: 'Bu Hafta',
-    description: 'Gelişen başlıkların özeti',
-    icon: 'date_range',
-    tone: 'weekly',
-    to: '/discover?tab=weekly',
-  },
-  {
-    title: 'Gözden Kaçanlar',
-    description: 'Az görülmüş iyi içerikler',
-    icon: 'visibility_off',
-    tone: 'quiet',
-    to: '/discover?tab=overlooked',
-  },
+const composerTools = [
+  { label: 'Görsel ekle', icon: 'image', to: '/compose' },
+  { label: 'Anket oluştur', icon: 'poll', to: '/compose' },
+  { label: 'Bilgi notu ekle', icon: 'info_outline', to: '/compose' },
+  { label: 'Duygu ekle', icon: 'sentiment_satisfied_alt', to: '/compose' },
+  { label: 'Etkinlik ekle', icon: 'event_available', to: '/compose' },
+  { label: 'İlgi alanlarını düzenle', icon: 'tune', to: '/onboarding' },
 ]
 </script>
 
 <style scoped>
 .home-page {
+  min-height: 100%;
   color: var(--ns-text);
-  background: var(--ns-bg-subtle);
+  background: var(--ns-bg);
 }
 
 .home-shell {
+  width: 100%;
+  padding: 28px 20px 72px 28px;
+}
+
+.home-tabs {
+  position: relative;
   display: grid;
-  gap: 28px;
-  width: min(100%, 1100px);
-  padding: 28px 20px 72px;
-  margin: 0 auto;
+  grid-template-columns: repeat(2, 1fr);
+  height: 62px;
+  margin: 0 44px 0 104px;
 }
 
-.home-main {
-  display: grid;
-  gap: 20px;
-  min-width: 0;
+.home-tabs::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  content: '';
+  background: var(--ns-border);
 }
 
-.home-welcome,
-.composer-entry,
-.section-heading,
-.aside-heading,
-.aside-section--values {
-  display: flex;
-  align-items: center;
+.home-tabs__item--active::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  height: 5px;
+  content: '';
+  background: linear-gradient(90deg, var(--ns-cyan), #3b47ff);
+  border-radius: 5px 5px 0 0;
 }
 
-.home-welcome {
-  gap: 20px;
-  justify-content: space-between;
-  padding: 22px;
-  background: linear-gradient(115deg, #fff 0%, #f4f9ff 100%);
-  border: 1px solid var(--ns-border);
-  border-radius: var(--radius-lg);
+.home-tabs button {
+  position: relative;
+  min-height: 58px;
+  padding: 0 20px;
+  color: var(--ns-text-tertiary);
+  font: inherit;
+  font-size: 0.98rem;
+  font-weight: 500;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
 }
 
-.home-welcome > div {
-  display: grid;
-  gap: 5px;
+.home-tabs button:hover {
+  color: var(--ns-text);
 }
 
-.home-eyebrow,
-.section-heading > div > span {
+.home-tabs button.home-tabs__item--active {
   color: var(--ns-brand);
-  font-size: 11px;
-  font-weight: 750;
-}
-
-.home-welcome h1,
-.home-welcome p,
-.section-heading h2,
-.aside-section h2,
-.aside-section p {
-  margin: 0;
-}
-
-.home-welcome h1 {
-  font-size: clamp(24px, 5vw, 31px);
-  line-height: 1.2;
-}
-
-.home-welcome p {
-  color: var(--ns-text-secondary);
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-.home-welcome .q-btn {
-  flex: 0 0 auto;
-  min-height: 44px;
-  border-radius: var(--radius-sm);
+  font-weight: 700;
 }
 
 .composer-entry {
-  gap: 12px;
-  min-height: 72px;
-  padding: 14px 18px;
-  color: var(--ns-text-secondary);
-  text-decoration: none;
+  min-height: 162px;
+  padding: 24px 26px 0;
   background: var(--ns-surface);
-  border: 1px solid var(--ns-border);
-  border-radius: var(--radius-lg);
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 8px 34px var(--ns-card-shadow);
 }
 
-.composer-entry > span {
-  flex: 1;
-  font-size: 14px;
-}
-
-.composer-entry > .q-icon {
-  color: var(--ns-brand);
-  font-size: 22px;
-}
-
-.composer-entry:hover {
-  border-color: var(--ns-brand);
-}
-
-.discovery-strip,
-.home-feed {
+.composer-entry__prompt {
   display: grid;
-  gap: 12px;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+  min-height: 70px;
 }
 
-.section-heading {
-  justify-content: space-between;
-  min-height: 44px;
-}
-
-.section-heading > div {
-  display: grid;
-  gap: 2px;
-}
-
-.section-heading h2 {
-  font-size: 19px;
-}
-
-.section-heading > a {
+.composer-entry__prompt a {
+  min-height: 48px;
   display: flex;
-  gap: 4px;
   align-items: center;
-  color: var(--ns-brand);
-  font-size: 12px;
-  font-weight: 650;
-  text-decoration: none;
-}
-
-.discovery-strip__links {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  overflow: hidden;
-  background: var(--ns-surface);
-  border: 1px solid var(--ns-border);
-  border-radius: var(--radius-lg);
-}
-
-.discovery-link {
-  display: grid;
-  grid-template-columns: 40px minmax(0, 1fr) 20px;
-  gap: 10px;
-  align-items: center;
-  min-height: 88px;
-  padding: 14px;
-  color: var(--ns-text);
-  text-decoration: none;
-}
-
-.discovery-link + .discovery-link {
-  border-left: 1px solid var(--ns-border);
-}
-
-.discovery-link > .q-icon:first-child {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  color: var(--ns-brand);
-  background: var(--ns-brand-soft);
-  border-radius: 10px;
-}
-
-.discovery-link--weekly > .q-icon:first-child {
-  color: #6257ee;
-  background: #f0eeff;
-}
-
-.discovery-link--quiet > .q-icon:first-child {
-  color: #557285;
-  background: #edf3f6;
-}
-
-.discovery-link > div {
-  display: grid;
-  gap: 3px;
-  min-width: 0;
-}
-
-.discovery-link strong {
-  font-size: 13px;
-}
-
-.discovery-link span {
-  color: var(--ns-text-secondary);
-  font-size: 11px;
-  line-height: 1.35;
-}
-
-.discovery-link > .q-icon:last-child {
   color: var(--ns-text-tertiary);
+  font-size: 0.96rem;
+  text-decoration: none;
 }
 
-.discovery-link:hover {
-  background: var(--ns-surface-hover);
-}
-
-.feed-control-note {
+.composer-entry__actions {
   display: flex;
-  gap: 5px;
+  min-height: 67px;
   align-items: center;
-  color: var(--ns-brand);
-  font-size: 11px;
-  font-weight: 650;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 2px;
+  border-bottom: 1px solid var(--ns-border-strong);
+}
+
+.composer-entry__actions > div {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 60px;
+}
+
+.composer-entry__actions .q-btn {
+  min-width: 40px;
+  min-height: 40px;
+  color: var(--ns-text-secondary);
+}
+
+.composer-entry__submit {
+  width: 138px;
+  min-height: 36px !important;
+  color: var(--ns-text-secondary) !important;
+  font-size: 0.78rem;
+  background: var(--ns-button-muted) !important;
+  border-radius: var(--radius-round);
+}
+
+.home-feed {
+  background: var(--ns-surface);
+  border-radius: 0 0 18px 18px;
+  box-shadow: 0 15px 34px var(--ns-card-shadow);
 }
 
 .home-feed__list {
   overflow: hidden;
-  border: 1px solid var(--ns-border);
-  border-radius: var(--radius-lg);
+  border-radius: 0 0 18px 18px;
 }
 
-.home-aside {
-  display: none;
-  gap: 16px;
-  align-content: start;
-}
-
-.aside-section {
-  padding: 18px;
-  background: var(--ns-surface);
-  border: 1px solid var(--ns-border);
-  border-radius: var(--radius-md);
-}
-
-.aside-section h2 {
-  margin-top: 5px;
-  font-size: 18px;
-  line-height: 1.3;
-}
-
-.aside-section p {
-  margin-top: 8px;
-  color: var(--ns-text-secondary);
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.aside-section > .q-btn {
-  min-height: 40px;
-  padding-right: 0;
-  padding-left: 0;
-  margin-top: 8px;
-  font-size: 12px;
-}
-
-.aside-heading {
-  justify-content: space-between;
-  font-size: 14px;
-  font-weight: 750;
-}
-
-.aside-heading .q-icon {
-  color: var(--ns-brand);
-}
-
-.aside-section--topics ol {
-  padding: 0;
-  margin: 12px 0;
-  list-style: none;
-}
-
-.aside-section--topics li {
+.home-feed__empty {
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr);
-  gap: 8px;
-  padding: 11px 0;
-  border-bottom: 1px solid var(--ns-border);
-}
-
-.aside-section--topics li > span {
-  color: var(--ns-text-tertiary);
-  font-size: 11px;
-  font-weight: 750;
-}
-
-.aside-section--topics li > div {
-  display: grid;
-  gap: 3px;
-}
-
-.aside-section--topics strong {
-  font-size: 12px;
-}
-
-.aside-section--topics small {
-  color: var(--ns-text-secondary);
-  font-size: 10px;
-}
-
-.aside-section--topics > a,
-.aside-section--values > a {
-  color: var(--ns-brand);
-  font-size: 11px;
-  font-weight: 650;
-  text-decoration: none;
-}
-
-.aside-section--values {
-  display: grid;
-  grid-template-columns: 36px minmax(0, 1fr);
-  gap: 10px;
-}
-
-.aside-section--values > .q-icon {
-  display: grid;
+  min-height: 260px;
   place-items: center;
-  width: 36px;
-  height: 36px;
-  color: var(--ns-brand);
-  background: var(--ns-brand-soft);
-  border-radius: 9px;
-}
-
-.aside-section--values > div {
-  display: grid;
-  gap: 3px;
-}
-
-.aside-section--values strong {
-  font-size: 12px;
-}
-
-.aside-section--values span {
+  align-content: center;
+  gap: 8px;
+  padding: 32px;
   color: var(--ns-text-secondary);
-  font-size: 10px;
-  line-height: 1.4;
+  text-align: center;
 }
 
-.aside-section--values > a {
-  grid-column: 2;
+.home-feed__empty strong {
+  color: var(--ns-text);
 }
 
-@media (min-width: 960px) {
+.home-feed__empty span {
+  font-size: 0.82rem;
+}
+
+@media (max-width: 1699px) {
   .home-shell {
-    padding-top: 36px;
+    padding-inline: 22px;
   }
 
-  .home-aside {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 960px) and (max-width: 1199px) {
-  .home-aside {
-    grid-template-columns: 1fr;
+  .home-tabs {
+    margin-inline: 34px;
   }
 }
 
-@media (max-width: 760px) {
-  .discovery-strip__links {
-    grid-template-columns: 1fr;
-  }
-
-  .discovery-link + .discovery-link {
-    border-top: 1px solid var(--ns-border);
-    border-left: 0;
-  }
-}
-
-@media (max-width: 599px) {
+@media (max-width: 959px) {
   .home-shell {
-    gap: 18px;
-    padding: 16px 0 32px;
+    padding: 0 0 36px;
   }
 
-  .home-main {
-    gap: 16px;
+  .home-tabs {
+    height: 54px;
+    margin: 0;
+    background: var(--ns-bg);
   }
 
-  .home-welcome,
-  .composer-entry,
-  .discovery-strip,
-  .home-feed {
-    margin-right: 12px;
-    margin-left: 12px;
+  .home-tabs button {
+    min-height: 52px;
   }
 
-  .home-welcome {
-    align-items: flex-start;
-    flex-direction: column;
-    padding: 18px;
-  }
-
-  .home-welcome .q-btn {
-    width: 100%;
-  }
-
-  .home-feed__list {
-    margin-right: -12px;
-    margin-left: -12px;
-    border-right: 0;
-    border-left: 0;
+  .composer-entry {
+    min-height: 146px;
+    padding: 16px 14px 0;
     border-radius: 0;
+    box-shadow: none;
+  }
+
+  .composer-entry__prompt {
+    gap: 12px;
+    min-height: 62px;
+  }
+
+  .composer-entry__actions {
+    min-height: 66px;
+  }
+
+  .composer-entry__actions > div {
+    gap: 0;
+    margin-left: 0;
+  }
+
+  .composer-entry__actions .q-btn {
+    min-width: 36px;
+    min-height: 40px;
+  }
+
+  .composer-entry__actions .q-btn:nth-child(n + 5) {
+    display: none;
+  }
+
+  .composer-entry__submit {
+    width: 96px;
+  }
+
+  .home-feed,
+  .home-feed__list {
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+@media (max-width: 390px) {
+  .composer-entry__actions .q-btn:nth-child(n + 4) {
+    display: none;
   }
 }
 </style>
