@@ -232,6 +232,11 @@ defineProps({
   padding: 22px;
 }
 
+.campaign-context-hero--compact .campaign-context-hero__moment-icon {
+  top: 22px;
+  left: 22px;
+}
+
 @media (max-width: 720px) {
   .campaign-context-hero,
   .campaign-context-hero--compact {
@@ -255,6 +260,7 @@ defineProps({
   }
 
   .campaign-context-hero__moment-icon {
+    top: 22px;
     left: 18px;
   }
 }
