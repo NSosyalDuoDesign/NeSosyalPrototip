@@ -9,7 +9,7 @@
     </div>
 
     <div class="campaign-conversion__copy">
-      <span>NSosyal geçişi · Prototip</span>
+      <span>NSosyal’da devam et</span>
       <h2 id="campaign-conversion-title">{{ context.cta.transitionTitle }}</h2>
       <p>{{ context.cta.transitionBody }}</p>
     </div>
@@ -34,7 +34,6 @@
     </ol>
 
     <div class="campaign-conversion__actions">
-      <p>Uygulama veya üyelik durumu bu frontend prototipinde güvenli biçimde simüle edilir.</p>
       <q-btn
         unelevated
         no-caps
@@ -166,19 +165,10 @@ const selectedReactionLabel = computed(
 
 .campaign-conversion__actions {
   display: flex;
-  gap: 18px;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding-top: 18px;
   border-top: 1px solid var(--ns-border);
-}
-
-.campaign-conversion__actions p {
-  max-width: 430px;
-  margin: 0;
-  color: var(--ns-text-secondary);
-  font-size: 10px;
-  line-height: 1.45;
 }
 
 .campaign-conversion__actions .q-btn {

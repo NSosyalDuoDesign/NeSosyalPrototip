@@ -43,7 +43,7 @@
       <section class="demo-contexts" aria-labelledby="demo-contexts-title">
         <header>
           <div>
-            <span>QR bağlam laboratuvarı</span>
+            <span>Bağlam laboratuvarı</span>
             <h2 id="demo-contexts-title">Aynı yapı, farklı dış dünya anları</h2>
           </div>
           <p>Ziyaretçi değer akışını veya doğrudan üye girişini tek tıkla göster.</p>

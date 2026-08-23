@@ -1,9 +1,9 @@
 export const demoScenario = Object.freeze([
   {
     id: 1,
-    title: 'Bağlama açılan QR',
-    shortTitle: 'Ziyaretçi QR akışı',
-    description: 'Dizi yayını QR’ından üye olmadan sosyal katmanları aç.',
+    title: 'Bağlama açılan an',
+    shortTitle: 'Ziyaretçi bağlam akışı',
+    description: 'Dizi yayınından üye olmadan sosyal katmanları aç.',
     status: 'ready',
     location: { name: 'campaign', query: { context: 'series', mode: 'visitor' } },
   },
