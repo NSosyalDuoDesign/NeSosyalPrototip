@@ -117,8 +117,33 @@ function toggleFollow(handle) {
   border-radius: var(--radius-round);
 }
 
+.profile-trigger :deep(.q-focus-helper) {
+  opacity: 0 !important;
+}
+
 .profile-trigger :deep(.q-btn__content) {
   gap: 5px;
+}
+
+.profile-trigger :deep(.user-avatar),
+.profile-trigger :deep(.q-icon) {
+  transition:
+    color var(--motion-fast) var(--ease-standard),
+    box-shadow var(--motion-fast) var(--ease-standard),
+    transform var(--motion-fast) var(--ease-standard);
+}
+
+.profile-trigger:hover :deep(.user-avatar),
+.profile-trigger:focus-visible :deep(.user-avatar),
+.profile-trigger[aria-expanded='true'] :deep(.user-avatar) {
+  box-shadow: 0 0 0 3px var(--ns-brand-soft);
+}
+
+.profile-trigger:hover :deep(.q-icon),
+.profile-trigger:focus-visible :deep(.q-icon),
+.profile-trigger[aria-expanded='true'] :deep(.q-icon) {
+  color: var(--ns-brand);
+  transform: translateY(1px);
 }
 
 .profile-suggestion .q-btn {
