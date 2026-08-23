@@ -1,5 +1,3 @@
-import { DEMO_HARSH_DRAFT } from '@/services/language-intervention.js'
-
 export const demoScenario = Object.freeze([
   {
     id: 1,
@@ -63,14 +61,6 @@ export const demoScenario = Object.freeze([
   },
   {
     id: 8,
-    title: 'Yapıcı paylaşım',
-    shortTitle: 'Yapıcı dil',
-    description: 'Sabit demo metniyle dostça dil uyarısını çalıştır.',
-    status: 'ready',
-    location: { name: 'compose', query: { demoDraft: 'harsh' } },
-  },
-  {
-    id: 9,
     title: 'Geri dönen kullanıcı',
     shortTitle: 'Sen yokken',
     description: 'Geri dönüş durumunu hazırlayıp yeni kalma nedenlerini göster.',
@@ -78,7 +68,7 @@ export const demoScenario = Object.freeze([
     location: { name: 'return', query: { mode: 'returning' } },
   },
   {
-    id: 10,
+    id: 9,
     title: 'Prototipi sıfırla',
     shortTitle: 'Sıfırla',
     description: 'Yerel demo tercihlerini öngörülebilir başlangıç durumuna döndür.',
@@ -101,8 +91,7 @@ export function prepareDemoStep(store, stepId) {
   if (id === 5) store.seedSpecificFeedback()
   if (id === 6) store.seedOnboarding(true)
   if (id === 7) store.setExperiencePreset('balanced')
-  if (id === 8) store.seedComposerText(DEMO_HARSH_DRAFT)
-  if (id === 9) store.seedReturningUser()
+  if (id === 8) store.seedReturningUser()
 }
 
 export function resetDemoState(store, storage) {
