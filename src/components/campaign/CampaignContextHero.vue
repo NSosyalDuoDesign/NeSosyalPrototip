@@ -148,7 +148,7 @@ defineProps({
   display: grid;
   align-content: end;
   min-height: 340px;
-  padding: 28px;
+  padding: 108px 28px 28px;
   overflow: hidden;
   color: var(--ns-text);
   background: var(--ns-surface);
@@ -180,11 +180,19 @@ defineProps({
   place-items: center;
 }
 
+.campaign-context-hero__moment-icon,
+.campaign-context-hero__source .q-icon,
+.campaign-context-hero__bridge .q-icon {
+  flex: 0 0 auto;
+}
+
 .campaign-context-hero__moment-icon .q-icon {
   font-size: 28px;
 }
 
 .campaign-context-hero__moment > span {
+  position: relative;
+  z-index: 1;
   color: var(--campaign-accent);
   font-size: 11px;
   font-weight: 750;
@@ -229,7 +237,7 @@ defineProps({
 
 .campaign-context-hero--compact .campaign-context-hero__moment {
   min-height: 280px;
-  padding: 22px;
+  padding: 94px 22px 22px;
 }
 
 .campaign-context-hero--compact .campaign-context-hero__moment-icon {
@@ -251,12 +259,14 @@ defineProps({
   .campaign-context-hero__moment,
   .campaign-context-hero--compact .campaign-context-hero__moment {
     min-height: 260px;
+    padding-top: 100px;
   }
 }
 
 @media (max-width: 380px) {
-  .campaign-context-hero__moment {
-    padding: 22px 18px;
+  .campaign-context-hero__moment,
+  .campaign-context-hero--compact .campaign-context-hero__moment {
+    padding: 94px 18px 22px;
   }
 
   .campaign-context-hero__moment-icon {
