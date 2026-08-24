@@ -74,7 +74,7 @@ export const campaignContexts = Object.freeze([
       title: 'Duvardaki fotoğraf bu bölümde ilk kez değişti',
       body: 'Aynı odanın önceki üç bölümdeki görüntülerini karşılaştıran kullanıcılar, fotoğraftaki üçüncü kişinin bu sahneden hemen önce kaldırıldığını fark etti.',
       metric: 'Son 12 dakikada 3.640 kişi bu ayrıntıyı konuştu',
-      icon: 'frame_inspect',
+      icon: 'photo_library',
     },
     live: {
       activeCount: '6.840 kişi',
@@ -187,7 +187,7 @@ export const campaignContexts = Object.freeze([
       title: 'Erişilebilir ulaşım, iki tarafın da ortak eksik noktası',
       body: 'NSosyal’daki konuşmada yükselen başlık, kapanma kararından önce erişilebilir ring hattı ve engelsiz durakların planlanması gerektiğini gösteriyor.',
       metric: 'Erişilebilirlik başlığı 18 dakikada 1.420 katkı aldı',
-      icon: 'accessible_forward',
+      icon: 'accessible',
     },
     live: {
       activeCount: '4.210 kişi',
@@ -300,7 +300,7 @@ export const campaignContexts = Object.freeze([
       title: 'Gece ulaşımını en çok vardiyalı çalışanlar konuşuyor',
       body: 'Yerel konuşmalarda hastane, lojistik ve hizmet sektörü çalışanlarının paylaşımları hızla artıyor. Konu yalnızca hafta sonu eğlencesi değil.',
       metric: 'Vardiyalı çalışanlardan son bir saatte 2.060 katkı',
-      icon: 'nightlife',
+      icon: 'access_time',
     },
     live: {
       activeCount: '5.530 kişi',
@@ -410,7 +410,7 @@ export const campaignContexts = Object.freeze([
       title: 'Cihazın gücü kadar açık standartlarla çalışması da tartışılıyor',
       body: 'NSosyal’daki teknik topluluklar, farklı kurumların aynı sahada ortak ağ kurabilmesini ürünün gizli başarı ölçütü olarak öne çıkarıyor.',
       metric: 'Birlikte çalışabilirlik başlığı 24 dakikada 980 katkı aldı',
-      icon: 'hub',
+      icon: 'device_hub',
     },
     live: {
       activeCount: '3.180 kişi',

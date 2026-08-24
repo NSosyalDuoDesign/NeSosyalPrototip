@@ -45,7 +45,7 @@ export const interestTaxonomy = Object.freeze([
     id: 'finans',
     label: 'Finans',
     description: 'Ekonomi okuryazarlığı ve kişisel finans',
-    iconKey: 'monitoring',
+    iconKey: 'account_balance_wallet',
   },
   {
     id: 'muzik',
