@@ -1,3 +1,4 @@
+
 # NSosyal Ürün Özellikleri: Kullanıcı Akışları, Arayüz ve Erişilebilirlik Raporu
 
 **Tarih:** 24 Ağustos 2026
@@ -41,7 +42,8 @@ Bu özellik, dış dünyadaki bir dizi, tartışma programı, şehir gündemi ve
 ### Kullanıcı akışı
 
 ```mermaid
-flowchart TD
+%%{init: {"themeVariables": {"fontSize": "24px"}}}%%
+flowchart LR
     A["Dış dünyadaki konu açılır"] --> B["Kaynak ve kısa soru görülür"]
     B --> C["Kullanıcı kendi görüşünü seçer"]
     C --> D["Topluluğun görüş dağılımı açılır"]
@@ -87,7 +89,8 @@ Bu özellik aynı konunun NSosyal içindeki tam tartışmasını gösterir. Ziya
 ### Kullanıcı akışı
 
 ```mermaid
-flowchart TD
+%%{init: {"themeVariables": {"fontSize": "24px"}}}%%
+flowchart LR
     A{"Kullanıcı nasıl geliyor?"}
     A -- "Ziyaretçi deneyiminden" --> B["Aynı konuda devam edildiği bildirilir"]
     A -- "NSosyal üyesi olarak" --> C["Canlı tartışma doğrudan açılır"]
@@ -136,7 +139,8 @@ Bu özellik kullanıcıya kişiselleştirmenin nasıl çalışacağını açıkl
 ### Kullanıcı akışı
 
 ```mermaid
-flowchart TD
+%%{init: {"themeVariables": {"fontSize": "24px"}}}%%
+flowchart LR
     A["Kişiselleştirme yaklaşımını oku"] --> B["İlgi alanlarını incele"]
     B --> C["En az üç konu seç"]
     C --> D{"Üç seçim tamamlandı mı?"}
@@ -178,7 +182,8 @@ Bu özellik seçilen ilgi alanları ve kullanıcının açık geri bildirimleriy
 ### Kullanıcı akışı
 
 ```mermaid
-flowchart TD
+%%{init: {"themeVariables": {"fontSize": "24px"}}}%%
+flowchart LR
     A["Kişisel ana sayfayı aç"] --> B{"Görünümü seç"}
     B --> C["Paylaşım akışını incele"]
     B --> D["Medya görünümünü incele"]
@@ -221,7 +226,8 @@ Bu özellik, kullanıcının bir paylaşımı neden gördüğünü öğrenmesini
 ### Kullanıcı akışı
 
 ```mermaid
-flowchart TD
+%%{init: {"themeVariables": {"fontSize": "24px"}}}%%
+flowchart LR
     A["Bir paylaşımın seçeneklerini aç"] --> B{"İhtiyacını seç"}
     B --> C["Neden gösterildiğini öğren"]
     B --> D["Benzer içeriklerle ilgilendiğini bildir"]
@@ -267,7 +273,8 @@ Bu özellik günün öne çıkanlarını, hafta boyunca gelişen konuları ve da
 ### Kullanıcı akışı
 
 ```mermaid
-flowchart TD
+%%{init: {"themeVariables": {"fontSize": "24px"}}}%%
+flowchart LR
     A["Keşif alanını aç"] --> B{"Seçki türünü belirle"}
     B --> C["Bugünün öne çıkanlarını gör"]
     B --> D["Haftanın gelişen konularını gör"]
@@ -318,7 +325,8 @@ Bu özellik içerik değişmeden yazı boyutu, akış yoğunluğu, açıklama mi
 ### Kullanıcı akışı
 
 ```mermaid
-flowchart TD
+%%{init: {"themeVariables": {"fontSize": "24px"}}}%%
+flowchart LR
     A["Görünüm seçeneklerini incele"] --> B["Dengeli veya Rahat görünümü seç"]
     B --> C["Canlı paylaşım önizlemesini karşılaştır"]
     C --> D{"Seçim uygun mu?"}
@@ -363,7 +371,8 @@ Bu özellik bir süre sonra geri gelen kullanıcıya kaçırdığı her şeyi y�
 ### Kullanıcı akışı
 
 ```mermaid
-flowchart TD
+%%{init: {"themeVariables": {"fontSize": "24px"}}}%%
+flowchart LR
     A["Bir süre sonra NSosyal'e dön"] --> B["Kişiye özel kısa özeti gör"]
     B --> C["İlgilenilen konuda yeni gelişmeyi oku"]
     C --> D{"Devam biçimini seç"}
