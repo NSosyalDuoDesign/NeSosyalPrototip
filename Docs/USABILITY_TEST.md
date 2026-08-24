@@ -1,35 +1,32 @@
-# NSosyal Demo Senaryosu Kullanılabilirlik Testi
+# NSosyal Ürün Özellikleri Kullanılabilirlik Testi
 
-Bu protokol yalnızca demo senaryosu kontrolünde sunulan örnek deneyimleri değerlendirmek için hazırlanmıştır. NSosyal’in bütün ürün yapısını veya demo dışında kalan özelliklerini ölçmeyi amaçlamaz.
+Bu protokol, demo senaryosu listesinde gösterilen gerçek NSosyal ürün özelliklerini değerlendirmek için hazırlanmıştır. Demo sunum aracının kendisi test konusu değildir; yalnızca ilgili özellikleri öngörülebilir başlangıç koşullarıyla açmak için kullanılır.
 
 ## Testin amacı
 
 Test aşağıdaki sorulara kanıt üretir:
 
-1. Sunumu yapan kişi demo adımlarını ve farklı bağlam örneklerini kolayca bulabiliyor mu?
-2. Katılımcı, dış dünyadaki bir an ile açılan sosyal deneyim arasındaki ilişkiyi anlayabiliyor mu?
-3. Katılımcı görüş belirttikten sonra topluluk dağılımını ve farklı bakışları bulabiliyor mu?
-4. İlk bakışta fark edilmeyen ayrıntı ile canlı tartışma arasındaki ilerleme anlaşılır mı?
-5. Katılımcı aynı konu içinde devam ettiğini anlayabiliyor mu?
-6. Demo senaryosunda gösterilen akış geri bildirimi, seçkiler ve görünüm tercihleri bulunabilir mi?
+1. Katılımcı, dış dünyadaki bir an ile açılan sosyal deneyim arasındaki ilişkiyi anlayabiliyor mu?
+2. Katılımcı görüş belirttikten sonra topluluk dağılımını ve farklı bakışları bulabiliyor mu?
+3. İlk bakışta fark edilmeyen ayrıntı ile canlı tartışma arasındaki ilerleme anlaşılır mı?
+4. Katılımcı aynı konu içinde devam ettiğini anlayabiliyor mu?
+5. İlgi alanı seçiminin kişisel akışa etkisi anlaşılabiliyor mu?
+6. Bir paylaşımın neden gösterildiği ve öneri tercihinin sonucu anlaşılabiliyor mu?
+7. Farklı keşif seçkileri ile görünüm tercihleri bulunabiliyor mu?
+8. Geri dönen kullanıcı özeti baskı oluşturmadan anlaşılabiliyor ve kapatılabiliyor mu?
 
 ## Kapsam
 
-Test edilen demo bileşenleri:
+Test kapsamındaki ürün özellikleri:
 
-- hazırlık ve ilerleme özeti,
-- dizi, tartışma programı, şehir gündemi ve teknoloji etkinliği kartları,
-- ziyaretçi ve NSosyal üyesi gösterim seçenekleri,
-- konuya tepki verme,
-- topluluk görüş dağılımı,
-- farklı görüş kartları,
-- gözden kaçan ayrıntı,
-- canlı tartışma önizlemesi,
-- akış tercihine geri bildirim verme,
-- günlük, haftalık ve gözden kaçan seçkiler,
-- görünüm tercihi,
-- geri dönüş özeti,
-- başlangıç durumuna dönme.
+- bağlamsal sosyal deneyim,
+- canlı tartışma alanı,
+- ilgi alanı seçimi,
+- kişiselleştirilmiş ana sayfa,
+- açık öneri kontrolü,
+- günlük, haftalık ve gözden kaçan keşif seçkileri,
+- deneyim tercihi,
+- geri dönen kullanıcı özeti.
 
 Demo senaryosu dışında kalan genel ürün navigasyonu ve yer tutucu ekranlar bu testin kapsamı dışındadır.
 
@@ -59,7 +56,7 @@ Her yeni katılımcıdan önce demo başlangıç durumuna döndürülmelidir. Da
 
 Moderatör şu kısa metni okuyabilir:
 
-> Bugün seni değil, NSosyal demo senaryosunu test ediyoruz; yanlış yapman mümkün değil. Görevler sırasında ne aradığını, ne beklediğini ve kafanı karıştıran noktaları sesli söylemeni istiyorum. Gerektiğinde yardım edebilirim, fakat önce nasıl ilerlediğini gözlemleyeceğim. İstediğin anda ara verebilir veya testi bitirebilirsin.
+> Bugün seni değil, NSosyal’deki bazı ürün özelliklerini test ediyoruz; yanlış yapman mümkün değil. Görevler sırasında ne aradığını, ne beklediğini ve kafanı karıştıran noktaları sesli söylemeni istiyorum. Gerektiğinde yardım edebilirim, fakat önce nasıl ilerlediğini gözlemleyeceğim. İstediğin anda ara verebilir veya testi bitirebilirsin.
 
 ## Görevler
 
