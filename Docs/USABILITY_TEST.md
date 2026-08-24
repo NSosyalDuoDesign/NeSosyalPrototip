@@ -1,126 +1,147 @@
-# NSosyal Kullanılabilirlik Testi
+# NSosyal Demo Senaryosu Kullanılabilirlik Testi
 
-Bu doküman, NSosyal prototipinin bağlamsal sosyal deneyimini ve temel ürün kontrollerini kısa, tekrarlanabilir ve raporlanabilir bir testle değerlendirmek için hazırlanmıştır. Test kayıt ekranı `/usability-test`, sunum girişi ise `/demo` adresindedir.
+Bu protokol yalnızca demo senaryosu kontrolünde sunulan örnek deneyimleri değerlendirmek için hazırlanmıştır. NSosyal’in bütün ürün yapısını veya demo dışında kalan özelliklerini ölçmeyi amaçlamaz.
 
 ## Testin amacı
 
 Test aşağıdaki sorulara kanıt üretir:
 
-1. Kullanıcı, açılan içeriğin dışarıdaki anla/konuyla ilişkisini anlayabiliyor mu?
-2. Üye olmadan önce topluluk görüşü, farklı bakışlar ve “Gözden Kaçan” katmanı değer yaratıyor mu?
-3. Kullanıcı, ana katılım eylemini doğru yorumlayıp aynı konuşmada devam edebiliyor mu?
-4. Mevcut bir üye bağlam merkezini genel akıştan ayırabiliyor mu?
-5. Akış tercihi, Keşfet ve görünüm ayarları bulunabilir ve anlaşılabilir mi?
-6. Genel kullanılabilirlik algısı hangi düzeyde?
+1. Sunumu yapan kişi demo adımlarını ve farklı bağlam örneklerini kolayca bulabiliyor mu?
+2. Katılımcı, dış dünyadaki bir an ile açılan sosyal deneyim arasındaki ilişkiyi anlayabiliyor mu?
+3. Katılımcı görüş belirttikten sonra topluluk dağılımını ve farklı bakışları bulabiliyor mu?
+4. İlk bakışta fark edilmeyen ayrıntı ile canlı tartışma arasındaki ilerleme anlaşılır mı?
+5. Katılımcı aynı konu içinde devam ettiğini anlayabiliyor mu?
+6. Demo senaryosunda gösterilen akış geri bildirimi, seçkiler ve görünüm tercihleri bulunabilir mi?
+
+## Kapsam
+
+Test edilen demo bileşenleri:
+
+- hazırlık ve ilerleme özeti,
+- dizi, tartışma programı, şehir gündemi ve teknoloji etkinliği kartları,
+- ziyaretçi ve NSosyal üyesi gösterim seçenekleri,
+- konuya tepki verme,
+- topluluk görüş dağılımı,
+- farklı görüş kartları,
+- gözden kaçan ayrıntı,
+- canlı tartışma önizlemesi,
+- akış tercihine geri bildirim verme,
+- günlük, haftalık ve gözden kaçan seçkiler,
+- görünüm tercihi,
+- geri dönüş özeti,
+- başlangıç durumuna dönme.
+
+Demo senaryosu dışında kalan genel ürün navigasyonu ve yer tutucu ekranlar bu testin kapsamı dışındadır.
 
 ## Katılımcı ve süre
 
 - İlk tur için 5–7 katılımcı önerilir.
-- Bağlamsal edinim hedefi nedeniyle katılımcıların çoğu NSosyal’i ilk kez gören kişiler olmalıdır.
-- Karşılaştırma için en az 1–2 mevcut/ürüne aşina kullanıcı eklenebilir.
-- Testlerin çoğu telefonda yapılmalıdır; en az bir masaüstü oturumu da eklenmelidir.
+- Katılımcıların çoğu NSosyal’i ilk kez gören kişiler olmalıdır.
+- Karşılaştırma için ürüne daha önce aşina 1–2 kişi eklenebilir.
+- Testlerin çoğu telefonda yapılmalı, en az bir masaüstü oturumu da eklenmelidir.
 - Bir oturum yaklaşık 20–25 dakika sürer.
-- Katılımcı adı, e-postası veya telefon numarası kaydedilmez. Yalnızca `K01`, `K02` gibi kodlar kullanılır.
+- İsim, e-posta veya telefon numarası kaydedilmez; yalnızca `K01`, `K02` gibi anonim kodlar kullanılır.
 
-Bu küçük örneklem istatistiksel genelleme için değil, tekrar eden kullanılabilirlik sorunlarını erken bulmak içindir.
+Bu örneklem istatistiksel genelleme için değil, demo anlatısında tekrarlanan kullanılabilirlik sorunlarını erken bulmak içindir.
 
 ## Hazırlık
 
-1. Uygulamayı çalıştırın ve `/usability-test` ekranını ayrı bir moderatör sekmesinde açın.
-2. Katılımcı için `K01` benzeri bir kod oluşturun; cihaz ve aşinalık bilgisini seçin.
-3. Katılımcının kullanacağı sekmede `/demo` sayfasını açın ve demo araç çubuğundaki sıfırlama kontrolüyle ürünü başlangıç durumuna döndürün.
-4. Bildirimleri, ekran kayıt iznini ve internet/yerel sunucu bağlantısını testten önce kontrol edin.
-5. Katılımcıya başarı ölçütlerini göstermeyin. Yalnızca görev metnini okuyun.
+1. Demo senaryosu ekranını katılımcı için açın.
+2. Araştırmacı kayıt ekranını ayrı bir moderatör sekmesinde hazır tutun.
+3. Katılımcıya anonim bir kod verin; cihaz ve ürün aşinalığı bilgisini seçin.
+4. Demo senaryosundaki başlangıca dönme adımını kullanın.
+5. Telefon boyutunu, internet bağlantısını ve varsa ekran kayıt iznini kontrol edin.
+6. Katılımcıya başarı ölçütlerini göstermeyin; yalnızca görev metnini okuyun.
 
-Her yeni katılımcıdan önce prototipi sıfırlayın. Kullanılabilirlik sonuçları ayrı bir yerel depolama anahtarında tutulduğu için ürün durumunu sıfırlamak kayıtlı araştırma sonuçlarını silmez.
+Her yeni katılımcıdan önce demo başlangıç durumuna döndürülmelidir. Daha önce kaydedilmiş araştırma sonuçları korunmalıdır.
 
 ## Açılış metni
 
-Moderatör aşağıdaki kısa metni okuyabilir:
+Moderatör şu kısa metni okuyabilir:
 
-> Bugün seni değil, NSosyal prototipini test ediyoruz; yanlış yapman mümkün değil. Görevler sırasında ne aradığını, ne beklediğini ve kafanı karıştıran noktaları sesli söylemeni istiyorum. Gerektiğinde yardım edebilirim, fakat önce nasıl ilerlediğini gözlemleyeceğim. İstediğin anda ara verebilir veya testi bitirebilirsin.
+> Bugün seni değil, NSosyal demo senaryosunu test ediyoruz; yanlış yapman mümkün değil. Görevler sırasında ne aradığını, ne beklediğini ve kafanı karıştıran noktaları sesli söylemeni istiyorum. Gerektiğinde yardım edebilirim, fakat önce nasıl ilerlediğini gözlemleyeceğim. İstediğin anda ara verebilir veya testi bitirebilirsin.
 
 ## Görevler
 
-Görevlerin güncel metni ve hedef bağlantıları `/usability-test` ekranında yer alır. Sıra korunmalıdır; ilk iki görev birbirinin devamıdır.
+Görevler aşağıdaki sırayla uygulanmalıdır. İlk iki görev birbirinin devamıdır.
 
 ### 1. Konuşmanın katmanlarını keşfet
 
 Katılımcıdan dizi sahnesiyle ilgili fikrini belirtmesini; topluluğun görüşünü, farklı bir bakışı ve gözden kaçan ayrıntıyı bulmasını isteyin.
 
-Başarı: Tepki verilir; topluluk dağılımı, perspektifler ve gözden kaçan alan yönlendirme olmadan bulunur.
+**Başarı ölçütü:** Tepki verilir; topluluk dağılımı, farklı görüşler ve gözden kaçan alan yönlendirme olmadan bulunur.
 
 ### 2. Aynı konuşmada devam et
 
 Katılımcıdan devam eden canlı konuşmayı incelemesini ve tartışmaya katılabileceği noktaya kadar ilerlemesini isteyin.
 
-Başarı: Ana eylem doğru yorumlanır ve aynı bağlamın NSosyal içindeki merkezine ulaşılır.
+**Başarı ölçütü:** Ana katılım düğmesi doğru yorumlanır ve aynı konunun NSosyal içindeki tartışma alanına ulaşılır.
 
-### 3. Üye olarak bağlama gir
+### 3. Üye olarak canlı tartışmaya gir
 
-Katılımcıdan canlı tartışma bağlamına doğrudan girmesini, topluluk nabzını kontrol etmesini ve yanıt vermeyi denemesini isteyin.
+Katılımcıdan aynı konuya NSosyal üyesi olarak girmesini, topluluk görüşünü kontrol etmesini ve bir görüşe yanıt vermeyi denemesini isteyin.
 
-Başarı: Bağlam merkezi genel akıştan ayrılır, nabız bulunur ve katılım eylemi başlatılır.
+**Başarı ölçütü:** Üye seçeneği bulunur, konuya ilişkin topluluk dağılımı görülür ve yanıt verme eylemi başlatılır.
 
-### 4. Akışını kontrol et
+### 4. Akış tercihine geri bildirim ver
 
-Katılımcıdan ana akışta ilgisini çeken veya çekmeyen bir paylaşım bulmasını ve tercihini NSosyal’e bildirmesini isteyin.
+Katılımcıdan demo akışında ilgisini çeken veya çekmeyen bir paylaşım bulmasını ve tercihini NSosyal’e bildirmesini isteyin.
 
-Başarı: “İlgileniyorum/İlgilenmiyorum” kontrolü bulunur ve oluşan geri bildirim anlaşılır.
+**Başarı ölçütü:** “İlgileniyorum” veya “İlgilenmiyorum” kontrolü bulunur ve oluşan geri bildirim anlaşılır.
 
-### 5. Gözden kaçanı bul
+### 5. Gözden kaçan seçkiyi bul
 
-Katılımcıdan Keşfet alanında normalde gözünden kaçabilecek içeriklerin neden gösterildiğini bulmasını isteyin.
+Katılımcıdan seçkiler içinde normalde gözünden kaçabilecek içerikleri ve bunların neden gösterildiğini bulmasını isteyin.
 
-Başarı: “Gözden Kaçanlar” alanına ulaşılır ve içeriğin gösterilme gerekçesi ifade edilir.
+**Başarı ölçütü:** Gözden Kaçanlar seçkisine ulaşılır ve içerik üzerindeki gösterilme gerekçesi ifade edilir.
 
 ### 6. Görünümü kendine göre ayarla
 
-Katılımcıdan okumayı daha rahat bulacağı görünümü seçmesini ve açık/karanlık görünümü değiştirmesini isteyin.
+Katılımcıdan okumayı daha rahat bulacağı yerleşimi seçmesini ve açık ya da karanlık görünümü değiştirmesini isteyin.
 
-Başarı: Görünüm ayarları bulunur; “Rahat” seçeneği ve tema kontrolü kullanılır.
+**Başarı ölçütü:** Rahat görünüm ve tema kontrolü bulunarak uygulanır.
 
 ## Moderatörün kaydedeceği ölçümler
 
 Her görev için:
 
 - **Sonuç:** Başarılı, kısmen başarılı veya başarısız.
-- **Süre:** Görev metni bittikten görevin tamamlandığı/bırakıldığı ana kadar geçen saniye.
+- **Süre:** Görev metni bittikten görevin tamamlandığı veya bırakıldığı ana kadar geçen saniye.
 - **Yardım:** Moderatörün yön gösterdiği her ayrı müdahale.
-- **Hata:** Katılımcıyı hedefinden uzaklaştıran fakat kendi başına düzelttiği veya düzeltemediği belirgin eylem.
-- **Zorluk:** Görev sonrası katılımcının verdiği 1–5 puan; 1 çok kolay, 5 çok zor.
-- **Gözlem:** Nerede durduğu, ne beklediği ve kullandığı dikkat çekici ifadeler.
+- **Hata:** Katılımcıyı hedefinden uzaklaştıran belirgin eylem.
+- **Zorluk:** Görev sonrası 1–5 puan; 1 çok kolay, 5 çok zor.
+- **Gözlem:** Katılımcının durduğu nokta, beklentisi ve dikkat çekici ifadeleri.
 
-Durumları tutarlı değerlendirin:
+Durumlar şu şekilde değerlendirilir:
 
-- **Başarılı:** Hedef tamamlandı; moderatör yardımı gerekmedi.
+- **Başarılı:** Hedef moderatör yardımı olmadan tamamlandı.
 - **Kısmen başarılı:** Hedef tamamlandı ancak yardım gerekti veya hedefin bir bölümü atlandı.
 - **Başarısız:** Hedef tamamlanmadı, yanlış yerde sonuçlandırıldı ya da katılımcı vazgeçti.
 
-Rapor, kısmi başarıları tam başarı saymaz. Yardım verilen bir görevi “Başarılı” yerine “Kısmen başarılı” işaretlemek karşılaştırmayı daha dürüst tutar.
+Yardım verilen görev tam başarılı sayılmamalıdır. Bu ayrım, sonraki test turlarını dürüst biçimde karşılaştırmayı sağlar.
 
 ## Oturum sonrası sorular
 
-Katılımcı görevlerden sonra standart 10 maddelik Sistem Kullanılabilirlik Ölçeği’ni (SUS) ve NSosyal’e özel dört ifadeyi 1–5 arasında yanıtlar.
+Katılımcı görevlerden sonra standart on maddelik Sistem Kullanılabilirlik Ölçeği’ni ve NSosyal’e özel dört ifadeyi 1–5 arasında yanıtlar.
 
-Ardından şu soruları sorun:
+Ardından şu sorular sorulur:
 
-1. En kolay bulduğun bölüm neydi?
+1. Demo senaryosunda en kolay bulduğun bölüm neydi?
 2. En çok nerede yavaşladın veya kararsız kaldın?
 3. Tek bir şeyi değiştirebilseydin neyi değiştirirdin?
 4. Deneyimi bir arkadaşına tek cümleyle nasıl anlatırdın?
 
-Katılımcının dikkat çekici sözünü anlamını değiştirmeden doğrudan ifade alanına kaydedin.
+Dikkat çekici bir söz, anlamı değiştirilmeden doğrudan ifade alanına kaydedilir.
 
-## SUS hesabı ve yorumlama
+## Sistem Kullanılabilirlik Ölçeği hesabı
 
-SUS, 10 yanıtın standart formülle 0–100 aralığına dönüştürülmesidir:
+On yanıt standart formülle 0–100 aralığına dönüştürülür:
 
 - Tek numaralı maddelerde yanıttan 1 çıkarılır.
 - Çift numaralı maddelerde yanıt 5’ten çıkarılır.
-- Katkılar toplanıp 2,5 ile çarpılır.
+- Tüm katkılar toplanıp 2,5 ile çarpılır.
 
-SUS bir yüzde değildir. Bu prototipte kullanılan okunabilirlik bantları:
+Bu sonuç bir yüzde değildir. Okuma bantları:
 
 | Puan | Kısa yorum |
 | ---: | --- |
@@ -129,42 +150,35 @@ SUS bir yüzde değildir. Bu prototipte kullanılan okunabilirlik bantları:
 | 51–67,9 | İyileştirmeye açık |
 | 0–50,9 | Öncelikli iyileştirme gerekli |
 
-Küçük örneklemde tek başına SUS karar vermek için yeterli değildir. Görev başarıları, süreler ve gözlemlerle birlikte yorumlanmalıdır.
+Küçük örneklemde bu puan tek başına karar vermek için yeterli değildir. Görev başarıları, süreler ve gözlemlerle birlikte yorumlanmalıdır.
 
 ## Sonuçların rapora alınması
 
-Her oturum sonunda “Katılımcıyı kaydet” düğmesini kullanın. `/usability-test` ekranı otomatik olarak şunları üretir:
+Her oturum sonunda katılımcı kaydedilir. Araştırmacı ekranı şu çıktıları üretir:
 
 - katılımcı ve cihaz dağılımı,
 - tam görev başarı oranı,
-- görev başına başarı/kısmi/başarısız sayısı,
+- görev başına sonuç dağılımı,
 - ortalama süre ve zorluk,
 - yardım ve hata toplamı,
-- ortalama SUS ve kısa yorumu,
-- NSosyal’e özel ifade ortalamaları,
-- açık uçlu cevaplar,
-- Markdown rapor metni,
-- ayrıntılı ham CSV.
-
-“Raporu kopyala” çıktısı doğrudan proje raporuna eklenebilir. “Ham CSV” ölçümlerin ayrıca tablo veya grafik üretmek için saklanmasını sağlar.
+- genel kullanılabilirlik sonucu,
+- ürüne özel ifadelerin ortalamaları,
+- açık uçlu yanıtlar,
+- kopyalanabilir rapor metni,
+- ham ölçüm tablosu.
 
 ## Bulguları önceliklendirme
 
 1. Birden fazla katılımcıda tekrar eden sorunları işaretleyin.
-2. Düşük başarı, uzun süre, yüksek zorluk ve çok yardım/hata aynı görevde birleşiyorsa bu görevi yüksek öncelikli kabul edin.
-3. Tekil tercih yorumlarını kullanılabilirlik hatalarından ayırın.
-4. En önemli 3–5 sorunu “bulgu → kanıt → kullanıcı etkisi → öneri” biçiminde raporlayın.
+2. Düşük başarı, uzun süre, yüksek zorluk ve çok yardım aynı görevde birleşiyorsa yüksek öncelik verin.
+3. Tekil tercih yorumlarını kullanılabilirlik sorunlarından ayırın.
+4. En önemli 3–5 sorunu “bulgu → kanıt → kullanıcı etkisi → öneri” biçiminde yazın.
 5. Kritik değişikliklerden sonra aynı görevlerle kısa bir doğrulama testi yapın.
 
-Örnek bulgu yazımı:
-
-> **Bulgu:** Katılımcılar canlı konuşmaya geçiş eylemini geç fark etti. **Kanıt:** 6 katılımcının 4’ü ikinci görevde yardım aldı; ortalama süre diğer görevlerden yüksekti. **Etki:** Üyelik/katılım geçişi tamamlanmayabilir. **Öneri:** Ana eylemin metin ve görsel hiyerarşisini güçlendirip tekrar test edin.
-
-Gerçek test yapılmadan örnek veya tahmini sonuçlar nihai rapora eklenmemelidir.
+Gerçek test yapılmadan örnek veya tahmini sonuçlar katılımcı bulgusu olarak sunulmamalıdır.
 
 ## Kayıtlı iç değerlendirme
 
-24 Ağustos 2026 tarihinde test aracının ve temel akışların doğrulanması için `ID-01` kodlu tek kişilik bir iç uzman değerlendirmesi yapıldı. Bu kayıt harici kullanıcı araştırması değildir ve gerçek katılımcı ortalaması gibi yorumlanmamalıdır.
+24 Ağustos 2026 tarihinde demo senaryosunun ve test aracının doğrulanması için `ID-01` kodlu tek kişilik bir iç uzman değerlendirmesi yapıldı. Bu kayıt harici kullanıcı araştırması değildir ve gerçek katılımcı ortalaması gibi yorumlanmamalıdır.
 
-- Akış, tasarım ve erişilebilirlik raporu: [`UX_FLOW_ACCESSIBILITY_AND_USABILITY_REPORT.md`](./UX_FLOW_ACCESSIBILITY_AND_USABILITY_REPORT.md)
-- Ham görev verisi: [`usability-results/2026-08-24-internal-expert-walkthrough.csv`](./usability-results/2026-08-24-internal-expert-walkthrough.csv)
+İç değerlendirmede altı görevin tamamı yardımsız ve hatasız bitirildi. Ortalama süre 10,7 saniye, ortalama zorluk 1,3/5 ve genel kullanılabilirlik sonucu 90/100 olarak kaydedildi. Ayrıntılı sonuçlar demo senaryosu kullanıcı akışları, arayüz ve erişilebilirlik raporunda yer alır.
