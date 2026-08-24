@@ -161,3 +161,10 @@ Her oturum sonunda “Katılımcıyı kaydet” düğmesini kullanın. `/usabili
 > **Bulgu:** Katılımcılar canlı konuşmaya geçiş eylemini geç fark etti. **Kanıt:** 6 katılımcının 4’ü ikinci görevde yardım aldı; ortalama süre diğer görevlerden yüksekti. **Etki:** Üyelik/katılım geçişi tamamlanmayabilir. **Öneri:** Ana eylemin metin ve görsel hiyerarşisini güçlendirip tekrar test edin.
 
 Gerçek test yapılmadan örnek veya tahmini sonuçlar nihai rapora eklenmemelidir.
+
+## Kayıtlı iç değerlendirme
+
+24 Ağustos 2026 tarihinde test aracının ve temel akışların doğrulanması için `ID-01` kodlu tek kişilik bir iç uzman değerlendirmesi yapıldı. Bu kayıt harici kullanıcı araştırması değildir ve gerçek katılımcı ortalaması gibi yorumlanmamalıdır.
+
+- Akış, tasarım ve erişilebilirlik raporu: [`UX_FLOW_ACCESSIBILITY_AND_USABILITY_REPORT.md`](./UX_FLOW_ACCESSIBILITY_AND_USABILITY_REPORT.md)
+- Ham görev verisi: [`usability-results/2026-08-24-internal-expert-walkthrough.csv`](./usability-results/2026-08-24-internal-expert-walkthrough.csv)
